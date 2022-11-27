@@ -131,5 +131,62 @@ CREATE TABLE Phong (
   TenKhu VARCHAR(127) NOT NULL,
   MaLoaiPhong INT NOT NULL,
 
-  FOREIGN KEY ()
+  PRIMARY KEY (MaChiNhanh, SoPhong),
+  FOREIGN KEY (MaChiNhanh, TenKhu) REFERENCES Khu(MaChiNhanh, TenKhu),
+  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
+)
+
+--@block
+CREATE TABLE LoaiVatTu (
+  MaLoaiVatTu INT NOT NULL,
+  TenLoaiVatTu VARCHAR(127) NOT NULL,
+
+  PRIMARY KEY (MaLoaiVatTu)
+)
+
+--@block
+CREATE TABLE LoaiVatTuLoaiPhong (
+  MaLoaiPhong INT NOT NULL,
+  MaLoaiVatTu INT NOT NULL,
+  SoLuong INT DEFAULT 1,
+
+  PRIMARY KEY (MaLoaiPhong, MaLoaiVatTu),
+  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong),
+  FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu)
+)
+
+--@block
+CREATE TABLE  VatTu (
+  MaChiNhanh INT NOT NULL,
+  MaLoaiVatTu INT NOT NULL,
+  STTVatTu INT UNSIGNED NOT NULL,
+  SoPhong VARCHAR(16) NOT NULL,
+  TinhTrang TEXT,
+
+  PRIMARY KEY (MaChiNhanh, MaLoaiVatTu, STTVatTu),
+  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh),
+  FOREIGN KEY (MaChiNhanh, SoPhong) REFERENCES Phong(MaChiNhanh, SoPhong)
+)
+
+--@block
+CREATE TABLE NhaCungCap (
+  MaNhaCungCap INT NOT NULL AUTO_INCREMENT,
+  TenNhaCungCap VARCHAR(127) NOT NULL,
+  EMAIL VARCHAR(127),
+  DiaChi VARCHAR(127),
+
+  PRIMARY KEY (MaNhaCungCap)
+)
+
+--@block
+CREATE TABLE CungCapVatTu (
+  MaNhaCungCap INT NOT NULL,
+  MaLoaiVatTu INT NOT NULL AUTO_INCREMENT,
+  MaChiNhanh INT NOT NULL,
+
+  PRIMARY KEY  (MaLoaiVatTu, MaChiNhanh),
+
+  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh),
+  FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu),
+  FOREIGN KEY (MaNhaCungCap) REFERENCES NhaCungCap(MaNhaCungCap)
 )
