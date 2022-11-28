@@ -549,8 +549,6 @@ DROP TABLE IF EXISTS DichVu;
 CREATE TABLE DichVu(
 	MaDichVu VARCHAR(6),
 	LoaiDichVu VARCHAR(1) NOT NULL,
-	SoKhach INT,
-	PhongCach VARCHAR(127),
 	MaDoanhNghiep VARCHAR(6),
     
 	PRIMARY KEY (MaDichVu),
@@ -568,27 +566,105 @@ CREATE TRIGGER before_dichvu_insert BEFORE INSERT ON DichVu
 FOR EACH ROW
 	BEGIN
 		INSERT INTO DichVu_ID VALUE ();
-			SET NEW.MaDichVu = CONCAT("DN", NEW.LoaiDichVu, LPAD(LAST_INSERT_ID(), 3, '0'));
+			SET NEW.MaDichVu = CONCAT("DV", NEW.LoaiDichVu, LPAD(LAST_INSERT_ID(), 3, '0'));
 	END %%
     
 DELIMITER ;
 
-INSERT INTO DichVu (LoaiDichVu, SoKhach, PhongCach, MaDoanhNghiep)
+INSERT INTO DichVu (LoaiDichVu, MaDoanhNghiep)
 VALUES 
-	('R', '30', 'fast food', 'DN0001'),
-  ('R', '40', 'hotpot', 'DN0002'),
-	('R', '50', 'bbq and beer', 'DN0003'),
-	('S', '10', 'spa, massage', 'DN0004'),
-	('S', '8', 'spa, massage, meditation', 'DN0005'),
-	('C', '10', 'convenience store', 'DN0006'),
-	('C', '12', 'convenience store', 'DN0007'),
-	('C', '20', 'convenience store', 'DN0008'),
-	('M', '7', 'boy shop', 'DN0009'),
-	('M', '5', 'kitty shop', 'DN0010'),
-  ('B', '20', 'buffet bear and bar', 'DN0011');
+	('R', 'DN0001'),
+  ('R', 'DN0002'),
+	('R', 'DN0003'),
+	('S', 'DN0004'),
+	('S', 'DN0005'),
+	('C', 'DN0006'),
+	('C', 'DN0007'),
+	('C', 'DN0008'),
+	('M', 'DN0009'),
+	('M', 'DN0010'),
+  ('B', 'DN0011');
+
+DROP TABLE IF EXISTS DichVuNhaHang;
+CREATE TABLE DichVuNhaHang (
+	MaDichVu VARCHAR(6),
+	SoKhach INT,
+	PhongCach VARCHAR(127),
   
+  PRIMARY KEY (MaDichVu),
+  FOREIGN KEY (MaDichVu) REFERENCES DichVu(MaDichVu),
+  
+  CHECK (MaDichVu LIKE 'DNR%')
+);
 
+INSERT INTO DichVuNhaHang (MaDichVu, SoKhach, PhongCach)
+VALUES
+	('DNR001', '30', 'fast food'),
+	('DNR002', '40', 'hotpot'),
+  ('DNR003', '50', 'bbq and beer');
 
+DROP TABLE IF EXISTS DichVuSpa;
+CREATE TABLE DichVuSpa (
+	MaDichVu VARCHAR(6),
+  DichVuSpa VARCHAR(255),
+  
+  PRIMARY KEY (MaDichVu, DichVuSpa),
+  FOREIGN KEY (MaDichVu) REFERENCES DichVu(MaDichVu),
+  
+  CHECK (MaDichVu LIKE 'DNS%')
+);
+
+INSERT INTO DichVuSpa (MaDichVu, DichVuSpa)
+VALUES
+	('DNS004', 'massage'),
+	('DNS004', 'hair salon'),
+  ('DNS004', 'skin improvement'),
+	('DNS005', 'massage'),
+	('DNS005', 'hair salon'),
+  ('DNS005', 'skin improvement');
+
+DROP TABLE IF EXISTS LoaiHangDoLuuNiem;
+CREATE TABLE LoaiHangDoLuuNiem (
+	MaDichVu VARCHAR(6),
+  LoaiHang VARCHAR(30),
+  
+  PRIMARY KEY (MaDichVu, LoaiHang),
+  FOREIGN KEY (MaDichVu) REFERENCES DichVu(MaDichVu),
+  
+  CHECK (MaDichVu LIKE 'DNM%')
+);
+
+INSERT INTO LoaiHangDoLuuNiem (MaDichVu, LoaiHang)
+VALUES
+	('DNM009', 'batman toy'),
+  ('DNM009', 'car toy'),
+  ('DNM009', 'watch'),
+  
+  ('DNM010', 'hello kitty'),
+  ('DNM010', 'dress'),
+  ('DNM010', 'hat');
+
+DROP TABLE IF EXISTS ThuongHieuDoLuuNiem;
+CREATE TABLE ThuongHieuDoLuuNiem (
+	MaDichVu VARCHAR(6),
+  ThuongHieu VARCHAR(30),
+  
+  PRIMARY KEY (MaDichVu, ThuongHieu),
+  FOREIGN KEY (MaDichVu) REFERENCES DichVu(MaDichVu),
+  
+  CHECK (MaDichVu LIKE 'DNM%')
+);
+
+INSERT INTO ThuongHieuDoLuuNiem (MaDichVu, ThuongHieu)
+VALUES
+	('DNM009', 'H&M'),
+  ('DNM009', 'Coomate'),
+  ('DNM009', 'Uniqlo'),
+  
+  ('DNM010', 'Elise'),
+  ('DNM010', 'CANVAS'),
+  ('DNM010', 'LV');
+  
 -- Dịch Vụ Spa ---------------------------------------------
 -- Loại Hàng Đồ Lưu Niệm ---------------------------------------------
 -- Thương Hiệu Đồ Lưu Niệm ---------------------------------------------
