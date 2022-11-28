@@ -280,22 +280,22 @@ CREATE TABLE  VatTu (
 
 INSERT INTO VatTu(MaChiNhanh, MaLoaiVatTu, STTVatTu, SoPhong, TinhTrang)
 VALUES
-	("CN1", "VT0001", 1, "101", "Nguyen Ven"), ("CN1", "VT0001", 2, "102", "Nguyen Ven"), ("CN1", "VT0001", 3, "103", "Hoi phai mau ben canh phai"),	
-    ("CN1", "VT0002", 1, "101", "Nguyen Ven"), ("CN1", "VT0002", 2, "102", "Hoi phai mau ben canh trai"), ("CN1", "VT0002", 3, "103", "Nguyen Ven"),	
+	("CN1", "VT0001", 1, "101", "Nguyen Ven"), ("CN1", "VT0001", 2, "102", "Nguyen Ven"), ("CN1", "VT0001", 3, "103", "Hoi phai mau ben canh phai"),
+	("CN1", "VT0002", 1, "101", "Nguyen Ven"), ("CN1", "VT0002", 2, "102", "Hoi phai mau ben canh trai"), ("CN1", "VT0002", 3, "103", "Nguyen Ven"),
 
-    ("CN2", "VT0001", 1, "101", "Nguyen Ven"), ("CN2", "VT0001", 2, "101", "Nguyen Ven"),
-    ("CN2", "VT0002", 1, "101", "Nguyen Ven"), ("CN2", "VT0002", 2, "101", "Nguyen Ven"),
-    ("CN2", "VT0003", 1, "101", "Nguyen Ven"), ("CN2", "VT0003", 2, "101", "Nguyen Ven"),
+    ("CN2", "VT0001", 1, "101", "Nguyen Ven"), ("CN2", "VT0001", 2, "102", "Nguyen Ven"),
+    ("CN2", "VT0002", 1, "101", "Nguyen Ven"), ("CN2", "VT0002", 2, "102", "Nguyen Ven"),
+    ("CN2", "VT0003", 1, "101", "Nguyen Ven"), ("CN2", "VT0003", 2, "102", "Nguyen Ven"),
     
-    ("CN3", "VT0006", 1, "101", "Da thay moi"), ("CN2", "VT0006", 2, "101", "Da thay moi"),
-    ("CN3", "VT0007", 1, "101", "Da thay moi"), ("CN2", "VT0007", 2, "101", "Da thay moi"),
+    ("CN3", "VT0006", 1, "201", "Da thay moi"), ("CN3", "VT0006", 2, "202", "Da thay moi"),
+    ("CN3", "VT0007", 1, "201", "Da thay moi"), ("CN3", "VT0007", 2, "202", "Da thay moi"),
     
-    ("CN4", "VT0005", 1, "101", "Nguyen Ven"), ("CN2", "VT0005", 2, "101", "Bi hu 1 controller"),
-    ("CN4", "VT0003", 1, "101", "Nguyen Ven"), ("CN2", "VT0003", 2, "101", "Nguyen Ven"),
+    ("CN4", "VT0005", 1, "101", "Nguyen Ven"), ("CN4", "VT0005", 2, "102", "Bi hu 1 controller"),
+    ("CN4", "VT0003", 1, "101", "Nguyen Ven"), ("CN4", "VT0003", 2, "102", "Nguyen Ven"),
     
-    ("CN5", "VT0006", 1, "101", "Da thay moi"), ("CN5", "VT0006", 2, "101", "Da thay moi"), ("CN5", "VT0005", 1, "102", "Nguyen Ven"),
-    ("CN5", "VT0004", 1, "101", "Day du thuc pham"), ("CN5", "VT0004", 2, 102, "Day du thuc pham"), ("CN5", "VT0004", 3, 103, "Thieu ruou vang, nuoc ngot"),
-    ("CN5", "VT0005", 1, "101", "Nguyen Ven"), ("CN5", "VT0005", 2, "102", "Nguyen Ven"), ("CN5", "VT0005", 3, "103", "Nguyen Ven");
+	("CN5", "VT0006", 1, "501", "Da thay moi"), ("CN5", "VT0006", 2, "501", "Da thay moi"), ("CN5", "VT0006", 3, "505", "Nguyen Ven"),
+	("CN5", "VT0004", 1, "501", "Day du thuc pham"), ("CN5", "VT0004", 2, "505", "Day du thuc pham"), ("CN5", "VT0004", 3, "601", "Thieu ruou vang, nuoc ngot"),
+	("CN5", "VT0005", 1, "501", "Nguyen Ven"), ("CN5", "VT0005", 2, "505", "Nguyen Ven"), ("CN5", "VT0005", 3, "601", "Nguyen Ven");
     
 DROP TABLE IF EXISTS NhaCungCap;
 CREATE TABLE NhaCungCap (
