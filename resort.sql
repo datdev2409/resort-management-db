@@ -266,7 +266,7 @@ CREATE TABLE LoaiVatTu_LoaiPhong (
     FOREIGN KEY (MaLoaiVatTu)
         REFERENCES LoaiVatTu (MaLoaiVatTu),
     CHECK (SoLuong >= 1 AND SoLuong <= 20)
-)
+);
 
 INSERT INTO LoaiVatTu_LoaiPhong(MaLoaiPhong, MaLoaiVatTu, SoLuong)
 VALUE
@@ -292,7 +292,7 @@ CREATE TABLE VatTu (
         REFERENCES Phong (MaChiNhanh , SoPhong),
     FOREIGN KEY (MaLoaiVatTu)
         REFERENCES LoaiVatTu (MaLoaiVatTu)
-)
+);
 
 INSERT INTO VatTu(MaChiNhanh, MaLoaiVatTu, STTVatTu, SoPhong, TinhTrang)
 VALUES
@@ -320,12 +320,12 @@ CREATE TABLE NhaCungCap (
     Email VARCHAR(30),
     DiaChi VARCHAR(50),
     PRIMARY KEY (MaNhaCungCap)
-)
+);
 
 DROP TABLE IF EXISTS NhaCungCap_ID;
 CREATE TABLE NhaCungCap_ID (
     ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
-)
+);
 
 DELIMITER %%
 CREATE TRIGGER before_nhacungcap_insert BEFORE INSERT ON NhaCungCap
@@ -359,7 +359,7 @@ CREATE TABLE CungCapVatTu (
         REFERENCES LoaiVatTu (MaLoaiVatTu),
     FOREIGN KEY (MaNhaCungCap)
         REFERENCES NhaCungCap (MaNhaCungCap)
-)
+);
 
 INSERT INTO CungCapVatTu(MaNhaCungCap, MaLoaiVatTu, MaChiNhanh)
 VALUES
@@ -470,7 +470,7 @@ VALUES
   ("KH000003", 'PERSONAL PACKAGE', '2022-11-28 12:00:00', '2022-11-28 14:00:00', 5000);
 
 -- --------------------------------- Đơn Đặt Phòng ---------------------------------------------
-sssssssssssssssssssssssssssssssssssssssssssssssss
+
 DROP TABLE IF EXISTS DonDatPhong;
 CREATE TABLE DonDatPhong(
 	MaDatPhong VARCHAR(16) NOT NULL,
@@ -564,7 +564,8 @@ DROP TABLE IF EXISTS HoaDon_ID;
 CREATE TABLE HoaDon_ID (
 	ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT
 );
-sssssssssssssssssssssssssssssss
+
+
 DROP TRIGGER IF EXISTS before_hoadon_insert; 
 DELIMITER %%
 CREATE TRIGGER before_hoadon_insert BEFORE INSERT ON HoaDon
