@@ -2,7 +2,6 @@
 ####### 			CREATE DATABASE				#########
 #########################################################
 -- ----------------------------------- Chi nhánh --------------------------------------------------
-DROP TABLE chinhanh;
 
 CREATE TABLE ChiNhanh (
   MaChiNhanh INT NOT NULL AUTO_INCREMENT,
@@ -20,12 +19,7 @@ VALUES
   ('Ho Chi Minh', '268 Ly Thuong Kiet, P12, Q10', '0828696919', 'congdat2409@gmail.com'),
   ('Ho Chi Minh', '497 Hoa Hao, P7, Q10', '0828696919', 'datdev2409@gmail.com');
 
--- Hình Ảnh Chi Nhánh ---------------------------------------------
-ALTER TABLE hinhanhchinhanh
-	DROP CONSTRAINT fk_HinhAnhChiNhanh;
-
-DROP TABLE hinhanhchinhanh;
-
+-- ------------------------------ Hình Ảnh Chi Nhánh ---------------------------------------------
 CREATE TABLE HinhAnhChiNhanh(
   MaChiNhanh INT,
   HinhAnh VARCHAR(127) NOT NULL,
@@ -34,8 +28,8 @@ CREATE TABLE HinhAnhChiNhanh(
 
 ALTER TABLE HinhAnhChiNhanh
 	ADD CONSTRAINT fk_HinhAnh_ChiNhanh FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
-																                              ON UPDATE CASCADE
-                                                              ON DELETE CASCADE;
+																ON UPDATE CASCADE
+                                                                ON DELETE CASCADE;
 
 INSERT INTO  HinhAnhChiNhanh (MaChiNhanh, HinhAnh)
 VALUES
@@ -47,11 +41,6 @@ VALUES
   (4, '/path/to/img1');
   
 -- Khu ---------------------------------------------
-ALTER TABLE khu
-	DROP CONSTRAINT fk_Khu_ChiNhanh;
-
-DROP TABLE khu;
-
 CREATE TABLE Khu (
   MaChiNhanh INT NOT NULL,
   TenKhu VARCHAR(127) NOT NULL,
@@ -60,8 +49,8 @@ CREATE TABLE Khu (
 
 ALTER TABLE Khu
 	ADD CONSTRAINT fk_Khu_ChiNhanh FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
-															                            ON UPDATE CASCADE
-                                                          ON DELETE CASCADE;
+															ON UPDATE CASCADE
+                                                            ON DELETE CASCADE;
 
 INSERT INTO Khu (MaChiNhanh, TenKhu)
 VALUES 
@@ -74,11 +63,6 @@ VALUES
   (4, 'Ten Khu 6'),
   (4, 'Ten Khu 7');
 -- -------------------------------------Loại phòng ---------------------------------------------
-ALTER TABLE LoaiPhong
-	DROP CONSTRAINT ck_SoKhachLoaiPhong;
-
-DROP TABLE LoaiPhong;
-
 CREATE TABLE LoaiPhong (
   MaLoaiPhong INT NOT NULL AUTO_INCREMENT,
   TenLoaiPhong VARCHAR(127) NOT NULL UNIQUE,
@@ -101,11 +85,6 @@ VALUES
   ('Single', 35, '1', 'Single room');
 
 -- --------------------------------Thông Tin Giường ---------------------------------------------
-ALTER TABLE ThongTinGiuong
-	DROP CONSTRAINT fk_ThongTinGiuong_ChiNhanh;
-
-DROP TABLE ThongTinGiuong;
-
 CREATE TABLE ThongTinGiuong (
   MaLoaiPhong INT NOT NULL AUTO_INCREMENT,
   KichThuoc FLOAT(2, 1) NOT NULL,
@@ -115,8 +94,8 @@ CREATE TABLE ThongTinGiuong (
 
 ALTER TABLE ThongTinGiuong
 	ADD CONSTRAINT fk_ThongTinGiuong_ChiNhanh FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
-                                                                      ON UPDATE CASCADE
-                                                                      ON DELETE CASCADE;
+																		ON UPDATE CASCADE
+																		ON DELETE CASCADE;
 
 INSERT INTO ThongTinGiuong(MaLoaiPhong, KichThuoc, SoLuong)
 VALUES
@@ -129,12 +108,6 @@ VALUES
   (6, 1, 1);
   
 -- ----------------------------Chi Nhánh có Loại Phòng ---------------------------------------------
-ALTER TABLE ChiNhanhLoaiPhong
-	DROP CONSTRAINT fk_CNLoaiPhong_LoaiPhong,
-    DROP CONSTRAINT fk_CNLoaiPhong_ChiNhanh;
-
-DROP TABLE ChiNhanhLoaiPhong;
-
 CREATE TABLE ChiNhanhLoaiPhong (
   MaLoaiPhong INT NOT NULL,
   MaChiNhanh INT NOT NULL,
@@ -142,13 +115,13 @@ CREATE TABLE ChiNhanhLoaiPhong (
   PRIMARY KEY (MaLoaiPhong, MaChiNhanh) 
 );
 
-ALTER TABLE Khu
+ALTER TABLE ChiNhanhLoaiPhong
 	ADD CONSTRAINT fk_CNLoaiPhong_LoaiPhong FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
-                                                                    ON UPDATE CASCADE
-                                                                    ON DELETE CASCADE,
+																	  ON UPDATE CASCADE
+																	  ON DELETE CASCADE,
 	ADD CONSTRAINT fk_CNLoaiPhong_ChiNhanh  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
-                                                                   ON UPDATE CASCADE
-                                                                   ON DELETE CASCADE;															
+																	 ON UPDATE CASCADE
+																	 ON DELETE CASCADE;															
 
 INSERT INTO ChiNhanhLoaiPhong (MaLoaiPhong, MaChiNhanh, GiaThue)
 VALUES
@@ -162,12 +135,6 @@ VALUES
   (3, 2, 1000),
   (6, 3, 1200);
 -- --------------------------------------Phòng ---------------------------------------------
-ALTER TABLE Phong
-	DROP CONSTRAINT fk_Phong_Khu,
-    DROP CONSTRAINT fk_Phong_LoaiPhong;
-
-DROP TABLE Phong;
-	
 CREATE TABLE Phong (
   MaChiNhanh INT NOT NULL,
   SoPhong VARCHAR(16) NOT NULL,
@@ -179,14 +146,12 @@ CREATE TABLE Phong (
 
 ALTER TABLE Phong
 	ADD CONSTRAINT fk_Phong_Khu FOREIGN KEY (MaChiNhanh, TenKhu) REFERENCES Khu(MaChiNhanh, TenKhu)
-                                                               ON UPDATE CASCADE
-                                                               ON DELETE CASCADE,
+																 ON UPDATE CASCADE
+																 ON DELETE CASCADE,
 	ADD CONSTRAINT fk_Phong_LoaiPhong FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
-                                                              ON UPDATE CASCADE
-                                                              ON DELETE CASCADE;		
+																ON UPDATE CASCADE
+																ON DELETE CASCADE;		
 -- -------------------------------Loại Vật Tư ---------------------------------------------
-DROP TABLE loaivattu;
-
 CREATE TABLE LoaiVatTu (
   MaLoaiVatTu INT NOT NULL,
   TenLoaiVatTu VARCHAR(127) NOT NULL,
@@ -195,12 +160,6 @@ CREATE TABLE LoaiVatTu (
 );
 
 -- -----------------------------Loại Vật Tư Trong Loại Phòng ---------------------------------------------
-ALTER TABLE LoaiVatTuLoaiPhong
-	DROP CONSTRAINT fk_LVTPhong_LoaiPhong,
-    DROP CONSTRAINT fk_LVTPhong_LoaiVatTu;
-    
-DROP TABLE LoaiVatTuLoaiPhong;
-
 CREATE TABLE LoaiVatTuLoaiPhong (
   MaLoaiPhong INT NOT NULL,
   MaLoaiVatTu INT NOT NULL,
@@ -211,18 +170,12 @@ CREATE TABLE LoaiVatTuLoaiPhong (
 
 ALTER TABLE LoaiVatTuLoaiPhong
 	ADD CONSTRAINT fk_LVTPhong_LoaiPhong FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
-                                                                 ON UPDATE CASCADE
-                                                                 ON DELETE CASCADE,
+																   ON UPDATE CASCADE
+																   ON DELETE CASCADE,
 	ADD CONSTRAINT fk_LVTPhong_LoaiVatTu FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu)
-                                                                 ON UPDATE CASCADE
-                                                                 ON DELETE CASCADE;
+																   ON UPDATE CASCADE
+																   ON DELETE CASCADE;
 -- --------------------------------------- Vật Tư ---------------------------------------------
-ALTER TABLE VatTu
-	DROP CONSTRAINT fk_VatTu_ChiNhanh,
-    DROP CONSTRAINT fk_LVTPhong_Phong;
-    
-DROP TABLE VatTu;
-
 CREATE TABLE  VatTu (
   MaChiNhanh INT NOT NULL,
   MaLoaiVatTu INT NOT NULL,
@@ -235,14 +188,12 @@ CREATE TABLE  VatTu (
 
 ALTER TABLE VatTu
 	ADD CONSTRAINT fk_VatTu_ChiNhanh FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
-															                              ON UPDATE CASCADE
-															                              ON DELETE CASCADE,
+															  ON UPDATE CASCADE
+															  ON DELETE CASCADE,
 	ADD CONSTRAINT fk_LVTPhong_Phong FOREIGN KEY (MaChiNhanh, SoPhong) REFERENCES Phong(MaChiNhanh, SoPhong)
-																	                                   ON UPDATE CASCADE
-																	                                   ON DELETE CASCADE;
+																	   ON UPDATE CASCADE
+																	   ON DELETE CASCADE;
 -- ------------------------------------- Nhà Cung Cấp ---------------------------------------------
-DROP TABLE NhaCungCap;
-
 CREATE TABLE NhaCungCap (
   MaNhaCungCap INT NOT NULL AUTO_INCREMENT,
   TenNhaCungCap VARCHAR(127) NOT NULL,
@@ -253,13 +204,6 @@ CREATE TABLE NhaCungCap (
 );
 
 -- ------------------------------------ Cung Cấp Vật Tư ---------------------------------------------
-ALTER TABLE CungCapVatTu
-	DROP CONSTRAINT fk_CCVatTu_ChiNhanh,
-    DROP CONSTRAINT fk_CCVatTu_LVatTu,
-    DROP CONSTRAINT fk_CCVatTu_NhaCungCap;
-    
-DROP TABLE CungCapVatTu;
-
 CREATE TABLE CungCapVatTu (
   MaNhaCungCap INT NOT NULL,
   MaLoaiVatTu INT NOT NULL AUTO_INCREMENT,
@@ -270,21 +214,16 @@ CREATE TABLE CungCapVatTu (
 
 ALTER TABLE CungCapVatTu
 	ADD CONSTRAINT fk_CCVatTu_ChiNhanh FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
-                                                              ON UPDATE CASCADE
-                                                              ON DELETE CASCADE,
+															    ON UPDATE CASCADE
+															    ON DELETE CASCADE,
 	ADD CONSTRAINT fk_CCVatTu_LVatTu FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu)
-                                                             ON UPDATE CASCADE
-                                                             ON DELETE CASCADE,
+															   ON UPDATE CASCADE
+															   ON DELETE CASCADE,
     ADD CONSTRAINT fk_CCVatTu_NhaCungCap FOREIGN KEY (MaNhaCungCap) REFERENCES NhaCungCap(MaNhaCungCap)
-                                                                    ON UPDATE CASCADE
-                                                                    ON DELETE CASCADE;												
+																	ON UPDATE CASCADE
+																	ON DELETE CASCADE;												
                                                                
 -- ---------------------------------- Khách Hàng ---------------------------------------------
-ALTER TABLE CungCapVatTu
-    DROP CONSTRAINT ck_Diem;
-    
-DROP TABLE CungCapVatTu;
-
 create table KhachHang(
     MaKhachHang int(6) unsigned zerofill not null auto_increment,
 	prefix char(2) not null,
@@ -302,12 +241,6 @@ create table KhachHang(
 );
 
 -- --------------------------------- Gói Dich Vụ ---------------------------------------------
-ALTER TABLE GoiDichVu
-    DROP CONSTRAINT ck_SoNgay,
-     DROP CONSTRAINT ck_SoKhach;
-    
-DROP TABLE GoiDichVu;
-
 CREATE TABLE GoiDichVu(
 	TenGoi VARCHAR(127) NOT NULL UNIQUE,
     SoNgay INT NOT NULL,
@@ -319,13 +252,6 @@ CREATE TABLE GoiDichVu(
     CONSTRAINT ck_SoKhach CHECK (SoKhach >= 1 and SoKhach <= 10)
 );
 -- -------------------------------- Hóa Đơn Gói Dịch Vụ ---------------------------------------------
-ALTER TABLE HoaDonGoiDichVu
-    DROP CONSTRAINT fk_HoaDonGoiDV_KH,
-	DROP CONSTRAINT fk_HoaDonGoiDV_GoiDV,
-    DROP CONSTRAINT ck_BatDau_KetThuc;
-    
-DROP TABLE HoaDonGoiDichVu;
-
 CREATE TABLE HoaDonGoiDichVu(
 	MaKhachHang INT(6) unsigned zerofill not null,
 	TenGoi VARCHAR(127) NOT NULL,
@@ -335,22 +261,16 @@ CREATE TABLE HoaDonGoiDichVu(
     
     PRIMARY KEY (MaKhachHang, TenGoi, NgayGioMua),
 	CONSTRAINT fk_HoaDonGoiDV_KH FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
-                                                         ON UPDATE CASCADE
-                                                         ON DELETE NO ACTION,
+															 ON UPDATE CASCADE
+															 ON DELETE NO ACTION,
     CONSTRAINT fk_HoaDonGoiDV_GoiDV FOREIGN KEY (TenGoi) REFERENCES GoiDichVu(TenGoi)
-                                                         ON UPDATE CASCADE
-                                                         ON DELETE NO ACTION,
+														 ON UPDATE CASCADE
+														 ON DELETE NO ACTION,
     
     CONSTRAINT ck_BatDau_KetThuc CHECK (NgayBatDau > NgayGioMua)
 );
 
 -- --------------------------------- Đơn Đặt Phòng ---------------------------------------------
-ALTER TABLE DonDatPhong
-    DROP CONSTRAINT fk_DonDatPhong_KhachHang,
-    DROP CONSTRAINT fk_DonDatPhong_GoiDichVu;
-    
-DROP TABLE DonDatPhong;
-
 CREATE TABLE DonDatPhong(
 	Prefix CHAR(2) NOT NULL,
     MaDatPhong INT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
@@ -364,24 +284,18 @@ CREATE TABLE DonDatPhong(
     
     PRIMARY KEY (MaDatPhong),
     CONSTRAINT fk_DonDatPhong_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
-                                                                  ON UPDATE CASCADE
-                                                                  ON DELETE NO ACTION,
+																  ON UPDATE CASCADE
+																  ON DELETE NO ACTION,
 	CONSTRAINT fk_DonDatPhong_GoiDichVu FOREIGN KEY (TenGoiDichVu) REFERENCES GoiDichVu(TenGoi)
-                                                                 ON UPDATE CASCADE
-                                                                 ON DELETE NO ACTION,
+																   ON UPDATE CASCADE
+																   ON DELETE NO ACTION,
                          
     CONSTRAINT ck_NhanPhong_DatPhong CHECK (NgayNhanPhong > NgayGioDat),
     CONSTRAINT ck_TraPhong_NhanPhong CHECK (NgayTraPhong > NgayNhanPhong),
     CONSTRAINT ck_TinhTrang CHECK (TinhTrang >= 0 AND TinhTrang <= 3)
 );
 
--- --------------------------------- Phòng Thuê -----------------------------------------------------
-ALTER TABLE PhongThue
-    DROP CONSTRAINT fk_PhongThue_DDPhong,
-    DROP CONSTRAINT fk_PhongThue_Phong;
-    
-DROP TABLE PhongThue;
-
+-- --------------------------------- Phòng Thuê ----------------------------------------------------
 CREATE TABLE PhongThue(
 	MaDatPhong INT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
     MaChiNhanh INT NOT NULL,
@@ -390,18 +304,13 @@ CREATE TABLE PhongThue(
     
     PRIMARY KEY (MaDatPhong, SoPhong, MaChiNhanh),
     CONSTRAINT fk_PhongThue_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
-                                                             ON UPDATE CASCADE
-                                                             ON DELETE NO ACTION,
+															 ON UPDATE CASCADE
+															 ON DELETE NO ACTION,
 	CONSTRAINT fk_PhongThue_Phong FOREIGN KEY (MaChiNhanh, SoPhong) REFERENCES Phong(MaChiNhanh, SoPhong)
-                                                                  ON UPDATE CASCADE
-                                                                  ON DELETE NO ACTION
+																   ON UPDATE CASCADE
+																   ON DELETE NO ACTION
 );
 -- ------------------------------------- Hóa Đơn ---------------------------------------------
-ALTER TABLE HoaDon
-    DROP CONSTRAINT fk_HoaDon_DDPhong;
-    
-DROP TABLE HoaDon;
-
 CREATE TABLE HoaDon(
 	MaHoaDon INT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
     NgayNhanPhong DATETIME NOT NULL, 
@@ -412,10 +321,7 @@ CREATE TABLE HoaDon(
     PRIMARY KEY (MaHoaDon),
     CONSTRAINT fk_HoaDon_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
 );
-
--- ---------------------------------- Doanh Nghiệp -----------------------------------------------------------------
-DROP TABLE DoanhNghiep;
-
+-- ---------------------------------- Doanh Nghiệp ---------------------------------------------
 CREATE TABLE DoanhNghiep(
 	Prefix VARCHAR(2) DEFAULT "DN",
 	MaDoanhNghiep INT(4) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
@@ -424,12 +330,7 @@ CREATE TABLE DoanhNghiep(
     PRIMARY KEY (MaDoanhNghiep)
 );
 
--- ------------------------------------- Dịch Vụ ---------------------------------------------------------------
-ALTER TABLE DichVu
-	DROP CONSTRAINT fk_DichVu;
-    
-DROP TABLE DichVu;
-
+-- ------------------------------------- Dịch Vụ ------------------------------------------------
 CREATE TABLE DichVu(
 	Prefix VARCHAR(2) DEFAULT "DV",
 	MaDichVu INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
@@ -443,46 +344,36 @@ CREATE TABLE DichVu(
 
 ALTER TABLE DichVu
 	ADD CONSTRAINT ck_DichVu CHECK (STRCMP(LoaiDichVu,"R")
-									                  OR STRCMP(LoaiDichVu,"S") 
+									OR STRCMP(LoaiDichVu,"S") 
                                     OR STRCMP(LoaiDichVu,"C") 
                                     OR STRCMP(LoaiDichVu,"M") 
                                     OR STRCMP(LoaiDichVu,"B")),
 	ADD CONSTRAINT fk_DichVu FOREIGN KEY (MaDoanhNghiep) REFERENCES DoanhNghiep(MaDoanhNghiep)
-														                           ON UPDATE CASCADE
-                                                       ON DELETE CASCADE;
+														 ON UPDATE CASCADE
+                                                         ON DELETE CASCADE;
 
 -- Dịch Vụ Spa ---------------------------------------------
 -- Loại Hàng Đồ Lưu Niệm ---------------------------------------------
 -- Thương Hiệu Đồ Lưu Niệm ---------------------------------------------
 -- Mặt Bằng ---------------------------------------------
-ALTER TABLE MatBang
-	DROP CONSTRAINT fk_MatBang_ChiNhanh,
-	DROP CONSTRAINT fk_MatBang_DichVu;
-    
-DROP TABLE MatBang;
-
 CREATE TABLE MatBang(
 	MaChiNhanh INT,
-    SoTTMatBang INT UNSIGNED NOT NULL AUTO_INCREMENT DEFAULT 1,
+    STTMatBang INT UNSIGNED UNIQUE NOT NULL DEFAULT 1,
 	GiaThue INT NOT NULL,
     MaDichVu INT(3) UNSIGNED ZEROFILL,
     
-    PRIMARY KEY (MaChiNhanh, SoSTTMatBang)
+    PRIMARY KEY (MaChiNhanh, STTMatBang)
 );
 
 ALTER TABLE MatBang
 	ADD CONSTRAINT fk_MatBang_ChiNhanh FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
-																                              ON UPDATE CASCADE
-																                              ON DELETE CASCADE,
+																ON UPDATE CASCADE
+																ON DELETE CASCADE,
 	ADD CONSTRAINT fk_MatBang_DichVu FOREIGN KEY (MaDichVu) REFERENCES DichVu(MaDichVu)
-															                            ON UPDATE CASCADE
-															                            ON DELETE SET NULL;
+															ON UPDATE CASCADE
+															ON DELETE SET NULL,
+	ADD CONSTRAINT ck_STTMatBang CHECK (STTMatBang <= 50);
 -- Hình Ảnh Cửa Hàng ---------------------------------------------
-ALTER TABLE HinhAnhCuaHang
-	DROP CONSTRAINT fk_HinhAnhCH_MatBang;
-    
-DROP TABLE HinhAnhCuaHang;
-
 CREATE TABLE HinhAnhCuaHang(
 	MaChiNhanh INT,
     STTMatBang INT UNSIGNED NOT NULL,
@@ -493,15 +384,10 @@ CREATE TABLE HinhAnhCuaHang(
 
  ALTER TABLE HinhAnhCuaHang
 	ADD CONSTRAINT fk_HinhAnhCH_MatBang FOREIGN KEY (MaChiNhanh, STTMatBang) REFERENCES MatBang(MaChiNhanh, STTMatBang)
-                                                                           ON UPDATE CASCADE
-                                                                           ON DELETE CASCADE;
+																   ON UPDATE CASCADE
+																   ON DELETE CASCADE;
                                                                    
 -- ----------------------------- Khung Giờ Hoạt Động Cửa Hàng ---------------------------------------------
-ALTER TABLE KhungGioHoatDong
-	DROP CONSTRAINT fk_GioHD_MatBang;
-    
-DROP TABLE KhungGioHoatDong;
-
 CREATE TABLE KhungGioHoatDong(
 	MaChiNhanh INT,
     STTMatBang INT UNSIGNED NOT NULL,
@@ -513,5 +399,5 @@ CREATE TABLE KhungGioHoatDong(
 
 ALTER TABLE KhungGioHoatDong
 	ADD CONSTRAINT fk_GioHD_MatBang FOREIGN KEY (MaChiNhanh, STTMatBang) REFERENCES MatBang(MaChiNhanh, STTMatBang)
-                                                                       ON UPDATE CASCADE
-                                                                       ON DELETE CASCADE;
+																   ON UPDATE CASCADE
+																   ON DELETE CASCADE;
