@@ -113,7 +113,7 @@ CREATE TABLE ThongTinGiuong (
   PRIMARY KEY (MaLoaiPhong, KichThuoc)
 );
 
-ALTER TABLE Khu
+ALTER TABLE ThongTinGiuong
 	ADD CONSTRAINT fk_ThongTinGiuong_ChiNhanh FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
                                                                       ON UPDATE CASCADE
                                                                       ON DELETE CASCADE;
