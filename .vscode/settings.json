@@ -12,6 +12,45 @@
       "name": "[DB]_ass2",
       "username": "admin",
       "database": "RESORT"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "askForPassword": true,
+      "driver": "MySQL",
+      "name": "[DB]_ass2",
+      "database": "RESORT",
+      "username": "admin"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "askForPassword": true,
+      "driver": "MySQL",
+      "name": "RESORT_MANAGEMENT",
+      "database": "RESORT",
+      "username": "admin"
+    },
+    {
+      "mysqlOptions": {
+        "authProtocol": "default"
+      },
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 3306,
+      "askForPassword": true,
+      "driver": "MySQL",
+      "name": "[DB]_ass2",
+      "database": "RESORT",
+      "username": "admin"
     }
   ]
 }
