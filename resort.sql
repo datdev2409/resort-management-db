@@ -11,7 +11,7 @@ CREATE TABLE ChiNhanh (
 
 DROP TABLE IF EXISTS ChiNhanh_ID;
 CREATE TABLE ChiNhanh_ID (
-	ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
 );
 
 DROP TRIGGER IF EXISTS before_chinhanh_insert;
@@ -33,14 +33,18 @@ VALUES
   ("Ho Chi Minh", "267, Ly Thuong Kiet, P15", "0828624919", "hcm_267@gmail.com"),
   ("Binh Thuan", "11, Ly Thai To, P1", "0238696919", "bt_11@gmail.com");
   
-SELECT * FROM ChiNhanh;
+SELECT 
+    *
+FROM
+    ChiNhanh;
 
 DROP TABLE IF EXISTS HinhAnhChiNhanh;
-CREATE TABLE HinhAnhChiNhanh(
-  MaChiNhanh VARCHAR(5),
-  HinhAnh VARCHAR(127) NOT NULL,
-  PRIMARY KEY (MaChiNhanh, HinhAnh),
-  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
+CREATE TABLE HinhAnhChiNhanh (
+    MaChiNhanh VARCHAR(5),
+    HinhAnh VARCHAR(127) NOT NULL,
+    PRIMARY KEY (MaChiNhanh , HinhAnh),
+    FOREIGN KEY (MaChiNhanh)
+        REFERENCES ChiNhanh (MaChiNhanh)
 );
 
 INSERT INTO HinhAnhChiNhanh (MaChiNhanh, HinhAnh)
@@ -58,11 +62,13 @@ VALUES
 
 
 DROP TABLE IF EXISTS Khu;
+
 CREATE TABLE Khu (
-  MaChiNhanh VARCHAR(10),
-  TenKhu VARCHAR(16) NOT NULL,
-  PRIMARY KEY (MaChiNhanh, TenKhu),
-  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
+    MaChiNhanh VARCHAR(10),
+    TenKhu VARCHAR(16) NOT NULL,
+    PRIMARY KEY (MaChiNhanh , TenKhu),
+    FOREIGN KEY (MaChiNhanh)
+        REFERENCES ChiNhanh (MaChiNhanh)
 );
 
 INSERT INTO Khu (MaChiNhanh, TenKhu)
@@ -89,22 +95,22 @@ VALUES
 
 
 DROP TABLE IF EXISTS LoaiPhong;
-CREATE TABLE LoaiPhong(
-  MaLoaiPhong INT NOT NULL AUTO_INCREMENT,
-  TenLoaiPhong VARCHAR(16) NOT NULL UNIQUE,
-  DienTich FLOAT(5,2),
-  SoKhach INT NOT NULL,
-  MoTa VARCHAR(255),
-  PRIMARY KEY (MaLoaiPhong),
-  CHECK (SoKhach >= 1 AND SoKhach <= 10)
+CREATE TABLE LoaiPhong (
+    MaLoaiPhong INT NOT NULL AUTO_INCREMENT,
+    TenLoaiPhong VARCHAR(16) NOT NULL UNIQUE,
+    DienTich FLOAT(5 , 2 ),
+    SoKhach INT NOT NULL,
+    MoTa VARCHAR(255),
+    PRIMARY KEY (MaLoaiPhong),
+    CHECK (SoKhach >= 1 AND SoKhach <= 10)
 );
   
 INSERT INTO LoaiPhong(TenLoaiPhong, DienTich, SoKhach, MoTa)
 VALUES
   ('President', 60.5, '1', 'The most ornate rooms in the resort'),
-  ('King Room', 50, '1', 'A room with a king-size bed'),
-  ('Queen Room', 40, '1', 'A room with a queen-size bed'),
-  ('Family', 30, '4', 'Room for standard family (4 people)'),
+  ('King Room', 50, '1', 'A well-furnished room with king-size bed'),
+  ('Queen Room', 40, '1', 'A well-furnished room with queen-size bed'),
+  ('Family', 30, '4', 'Standard room for family (4 people)'),
   ('Couple', 28, '2', 'The romantic asmosphere for couple'),
   ('Double', 25, '2', 'Standard room for 2 people'),
   ('Single', 20, '1', 'Standard room for 1 person');
@@ -112,13 +118,13 @@ VALUES
 
 DROP TABLE IF EXISTS ThongTinGiuong;
 CREATE TABLE ThongTinGiuong (
-  MaLoaiPhong INT NOT NULL AUTO_INCREMENT,
-  KichThuoc FLOAT(2, 1) NOT NULL,
-  SoLuong INT NOT NULL DEFAULT 1,
-  PRIMARY KEY (MaLoaiPhong, KichThuoc),
-  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong),
-  
-  CHECK (SoLuong >= 1 AND SoLuong <= 10)
+    MaLoaiPhong INT NOT NULL AUTO_INCREMENT,
+    KichThuoc FLOAT(2 , 1 ) NOT NULL,
+    SoLuong INT NOT NULL DEFAULT 1,
+    PRIMARY KEY (MaLoaiPhong , KichThuoc),
+    FOREIGN KEY (MaLoaiPhong)
+        REFERENCES LoaiPhong (MaLoaiPhong),
+    CHECK (SoLuong >= 1 AND SoLuong <= 10)
 );
 
 INSERT INTO ThongTinGiuong(MaLoaiPhong, KichThuoc, SoLuong)
@@ -134,63 +140,71 @@ VALUES
 
 DROP TABLE IF EXISTS ChiNhanh_LoaiPhong;
 CREATE TABLE ChiNhanh_LoaiPhong (
-	MaChiNhanh VARCHAR(5),
-  MaLoaiPhong INT,
-  GiaThue INT NOT NULL,
-  PRIMARY KEY (MaLoaiPhong, MaChiNhanh),
-  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong),
-  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
+    MaChiNhanh VARCHAR(5),
+    MaLoaiPhong INT,
+    GiaThue INT NOT NULL,
+    PRIMARY KEY (MaLoaiPhong , MaChiNhanh),
+    FOREIGN KEY (MaLoaiPhong)
+        REFERENCES LoaiPhong (MaLoaiPhong),
+    FOREIGN KEY (MaChiNhanh)
+        REFERENCES ChiNhanh (MaChiNhanh)
 );
 
 INSERT INTO ChiNhanh_LoaiPhong (MaChiNhanh, MaLoaiPhong, GiaThue)
 VALUES
-  ("CN1", 4, 500),
-  ("CN1", 5, 350),
+	("CN1", 4, 500),
+	("CN1", 5, 350),
 	("CN1", 6, 300),
-  ("CN1", 7, 200),
+	("CN1", 7, 200),
   
-  ("CN2", 4, 500),
-  ("CN2", 5, 350),
-  ("CN2", 6, 300),
-  ("CN2", 7, 200),
+	("CN2", 4, 500),
+	("CN2", 5, 350),
+	("CN2", 6, 300),
+	("CN2", 7, 200),
   
-  ("CN3", 2, 1000),
-  ("CN3", 3, 900),
+	("CN3", 2, 1000),
+	("CN3", 3, 900),
 	("CN3", 4, 500),
-  ("CN3", 5, 350),
-  ("CN3", 6, 300),
-  ("CN3", 7, 200),
+	("CN3", 5, 350),
+	("CN3", 6, 300),
+	("CN3", 7, 200),
 	
-  ("CN4", 2, 1000),
-  ("CN4", 3, 900),
+	("CN4", 2, 1000),
+	("CN4", 3, 900),
 	("CN4", 4, 500),
-  ("CN4", 5, 350),
-  ("CN4", 6, 300),
-  ("CN4", 7, 200),
+	("CN4", 5, 350),
+	("CN4", 6, 300),
+	("CN4", 7, 200),
   
-  ("CN5", 1, 7000),
-  ("CN5", 2, 1200),
-  ("CN5", 3, 1000),
+	("CN5", 1, 7000),
+	("CN5", 2, 1200),
+	("CN5", 3, 1000),
 	("CN5", 4, 700),
-  ("CN5", 5, 450),
-  ("CN5", 6, 300),
-  ("CN5", 7, 200);
+	("CN5", 5, 450),
+	("CN5", 6, 300),
+	("CN5", 7, 200);
   
   
-SELECT * FROM ChiNhanh_LoaiPhong
-INNER JOIN LoaiPhong ON ChiNhanh_LoaiPhong.MaLoaiPhong = LoaiPhong.MaLoaiPhong
-WHERE ChiNhanh_LoaiPhong.MaChiNhanh = "CN1";
+SELECT 
+    *
+FROM
+    ChiNhanh_LoaiPhong
+        INNER JOIN
+    LoaiPhong ON ChiNhanh_LoaiPhong.MaLoaiPhong = LoaiPhong.MaLoaiPhong
+WHERE
+    ChiNhanh_LoaiPhong.MaChiNhanh = 'CN1';
 
 DROP TABLE IF EXISTS Phong;
 CREATE TABLE Phong (
-  MaChiNhanh VARCHAR(5),
-  SoPhong VARCHAR(3) NOT NULL,
-  TenKhu VARCHAR(16) NOT NULL,
-  MaLoaiPhong INT NOT NULL,
-
-  PRIMARY KEY (MaChiNhanh, SoPhong),
-  FOREIGN KEY (MaChiNhanh, TenKhu) REFERENCES Khu(MaChiNhanh, TenKhu),
-  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong)
+    MaChiNhanh VARCHAR(5),
+    SoPhong VARCHAR(3) NOT NULL,
+    TenKhu VARCHAR(16) NOT NULL,
+    MaLoaiPhong INT NOT NULL,
+    PRIMARY KEY (MaChiNhanh , SoPhong),
+    FOREIGN KEY (MaChiNhanh , TenKhu)
+        REFERENCES Khu (MaChiNhanh , TenKhu),
+    FOREIGN KEY (MaLoaiPhong)
+        REFERENCES LoaiPhong (MaLoaiPhong)
 );
 
 INSERT INTO Phong (MaChiNhanh, SoPhong, TenKhu, MaLoaiPhong)	
@@ -208,19 +222,16 @@ VALUES
   ("CN5", "505", "Vip", 2),
   ("CN5", "601", "Vip", 1);
 
-SELECT * FROM Phong;
-
 DROP TABLE IF EXISTS LoaiVatTu;
 CREATE TABLE LoaiVatTu (
-  MaLoaiVatTu VARCHAR(6),
-  TenLoaiVatTu VARCHAR(16) NOT NULL,
-
-  PRIMARY KEY (MaLoaiVatTu)
+    MaLoaiVatTu VARCHAR(6),
+    TenLoaiVatTu VARCHAR(25) NOT NULL,
+    PRIMARY KEY (MaLoaiVatTu)
 );
 
 DROP TABLE IF EXISTS LoaiVatTu_ID;
 CREATE TABLE LoaiVatTu_ID (
-	ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
 );
 
 DELIMITER %%
@@ -236,54 +247,85 @@ DELIMITER ;
 INSERT INTO LoaiVatTu (TenLoaiVatTu)
 VALUES
 	("Ghe"), 
-  ("Nem"), 
-  ("Giuong"), 
-  ("Sofa"),
-  ("TV"),
-  ("TuLanh"),
-  ("PS5");
+	("Sofa"),
+	("TV"),
+    ("May Lanh"),
+	("Tu Lanh"),
+	("PS5"),
+    ("Khăn"),
+    ("Bo ve sinh ca nhan");
     
-
 DROP TABLE IF EXISTS LoaiVatTu_LoaiPhong;
 CREATE TABLE LoaiVatTu_LoaiPhong (
-  MaLoaiVatTu VARCHAR(6),
-  MaLoaiPhong INT NOT NULL,
-  SoLuong INT DEFAULT 1,
+    MaLoaiVatTu VARCHAR(6),
+    MaLoaiPhong INT NOT NULL,
+    SoLuong INT DEFAULT 1,
+    PRIMARY KEY (MaLoaiPhong , MaLoaiVatTu),
+    FOREIGN KEY (MaLoaiPhong)
+        REFERENCES LoaiPhong (MaLoaiPhong),
+    FOREIGN KEY (MaLoaiVatTu)
+        REFERENCES LoaiVatTu (MaLoaiVatTu),
+    CHECK (SoLuong >= 1 AND SoLuong <= 20)
+)
 
-  PRIMARY KEY (MaLoaiPhong, MaLoaiVatTu),
-  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong),
-  FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu),
-  CHECK (SoLuong >= 1 AND SoLuong <= 20)
-);
+INSERT INTO LoaiVatTu_LoaiPhong(MaLoaiPhong, MaLoaiVatTu, SoLuong)
+VALUE
+	("7", "VT0002", 1), ("7", "VT0003", 1), ("7", "VT0006", 1), ("7", "VT0007", 1),
+    ("6", "VT0002", 1), ("6", "VT0003", 1), ("6", "VT0004", 1), ("6", "VT0006", 2), ("6", "VT0007", 2),
+    ("5", "VT0001", 1), ("5", "VT0002", 1), ("5", "VT0003", 1), ("5", "VT0004", 1), ("5", "VT0005", 1), ("5", "VT0006", 2), ("5", "VT0007", 2),
+    ("4", "VT0002", 1), ("4", "VT0003", 1), ("4", "VT0004", 1), ("4", "VT0005", 1), ("4", "VT0006", 2), ("4", "VT0007", 2),
+    ("3", "VT0002", 1), ("3", "VT0003", 1), ("3", "VT0004", 1), ("3", "VT0005", 1), ("3", "VT0006", 2), ("3", "VT0007", 2),
+    ("2", "VT0002", 1), ("2", "VT0003", 1), ("2", "VT0004", 1), ("2", "VT0005", 1), ("2", "VT0006", 2), ("2", "VT0007", 2),
+    ("1", "VT0002", 1), ("1", "VT0003", 1), ("1", "VT0004", 1), ("1", "VT0005", 1), ("1", "VT0006", 2), ("1", "VT0007", 2);
 
 DROP TABLE IF EXISTS VatTu;
-CREATE TABLE  VatTu (
-  MaChiNhanh VARCHAR(10),
-  MaLoaiVatTu VARCHAR(6),
-  STTVatTu INT UNSIGNED NOT NULL,
-  SoPhong VARCHAR(16) NOT NULL,
-  TinhTrang TEXT,
+CREATE TABLE VatTu (
+    MaChiNhanh VARCHAR(5),
+    MaLoaiVatTu VARCHAR(6),
+    STTVatTu INT UNSIGNED NOT NULL,
+    SoPhong VARCHAR(3) NOT NULL,
+    TinhTrang TEXT,
+    PRIMARY KEY (MaChiNhanh , MaLoaiVatTu , STTVatTu),
+    FOREIGN KEY (MaChiNhanh)
+        REFERENCES ChiNhanh (MaChiNhanh),
+    FOREIGN KEY (MaChiNhanh , SoPhong)
+        REFERENCES Phong (MaChiNhanh , SoPhong),
+    FOREIGN KEY (MaLoaiVatTu)
+        REFERENCES LoaiVatTu (MaLoaiVatTu)
+)
 
-  PRIMARY KEY (MaChiNhanh, MaLoaiVatTu, STTVatTu),
-  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh),
-  FOREIGN KEY (MaChiNhanh, SoPhong) REFERENCES Phong(MaChiNhanh, SoPhong),
-  FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu)
-);
+INSERT INTO VatTu(MaChiNhanh, MaLoaiVatTu, STTVatTu, SoPhong, TinhTrang)
+VALUES
+	("CN1", "VT0001", 1, "101", "Nguyen Ven"), ("CN1", "VT0001", 2, "102", "Nguyen Ven"), ("CN1", "VT0001", 3, "103", "Hoi phai mau ben canh phai"),
+	("CN1", "VT0002", 1, "101", "Nguyen Ven"), ("CN1", "VT0002", 2, "102", "Hoi phai mau ben canh trai"), ("CN1", "VT0002", 3, "103", "Nguyen Ven"),
 
+    ("CN2", "VT0001", 1, "101", "Nguyen Ven"), ("CN2", "VT0001", 2, "102", "Nguyen Ven"),
+    ("CN2", "VT0002", 1, "101", "Nguyen Ven"), ("CN2", "VT0002", 2, "102", "Nguyen Ven"),
+    ("CN2", "VT0003", 1, "101", "Nguyen Ven"), ("CN2", "VT0003", 2, "102", "Nguyen Ven"),
+    
+    ("CN3", "VT0006", 1, "201", "Da thay moi"), ("CN3", "VT0006", 2, "202", "Da thay moi"),
+    ("CN3", "VT0007", 1, "201", "Da thay moi"), ("CN3", "VT0007", 2, "202", "Da thay moi"),
+    
+    ("CN4", "VT0005", 1, "101", "Nguyen Ven"), ("CN4", "VT0005", 2, "102", "Bi hu 1 controller"),
+    ("CN4", "VT0003", 1, "101", "Nguyen Ven"), ("CN4", "VT0003", 2, "102", "Nguyen Ven"),
+    
+	("CN5", "VT0006", 1, "501", "Da thay moi"), ("CN5", "VT0006", 2, "501", "Da thay moi"), ("CN5", "VT0006", 3, "505", "Nguyen Ven"),
+	("CN5", "VT0004", 1, "501", "Day du thuc pham"), ("CN5", "VT0004", 2, "505", "Day du thuc pham"), ("CN5", "VT0004", 3, "601", "Thieu ruou vang, nuoc ngot"),
+	("CN5", "VT0005", 1, "501", "Nguyen Ven"), ("CN5", "VT0005", 2, "505", "Nguyen Ven"), ("CN5", "VT0005", 3, "601", "Nguyen Ven");
+    
 DROP TABLE IF EXISTS NhaCungCap;
 CREATE TABLE NhaCungCap (
-  MaNhaCungCap VARCHAR(7) NOT NULL,
-  TenNhaCungCap VARCHAR(127) NOT NULL,
-  email VARCHAR(127),
-  DiaChi VARCHAR(127),
-
-  PRIMARY KEY (MaNhaCungCap)
-);
+    MaNhaCungCap VARCHAR(7) NOT NULL,
+    TenNhaCungCap VARCHAR(50) NOT NULL,
+    Email VARCHAR(30),
+    DiaChi VARCHAR(50),
+    PRIMARY KEY (MaNhaCungCap)
+)
 
 DROP TABLE IF EXISTS NhaCungCap_ID;
 CREATE TABLE NhaCungCap_ID (
-	ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
-);
+    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+)
 
 DELIMITER %%
 CREATE TRIGGER before_nhacungcap_insert BEFORE INSERT ON NhaCungCap
@@ -295,21 +337,51 @@ CREATE TRIGGER before_nhacungcap_insert BEFORE INSERT ON NhaCungCap
 	
 DELIMITER ;
 
-
+INSERT INTO NhaCungCap(TenNhaCungCap, Email, DiaChi)
+VALUES
+	('Quitzon Group', 'holley6@stumbleupon.com', '5670 Morrow Pass'),
+	('Fahey, Pfannerstill and Beatty', 'htomkys5@unc.edu', '2 Sunbrook Parkway'),
+	('Maggio, O''Hara and Brakus', 'rrenzini4@slashdot.org', '2228 Autumn Leaf Avenue'),
+	('Brekke LLC', 'rlockery3@cornell.edu', '0807 Little Fleur Way'),
+	('Feil-Hegmann', 'jbetjeman2@lycos.com', '11416 Susan Court'),
+    ('Ortiz-Schmidt', 'ejewell1@tinyurl.com', '40 Karstens Lane'),
+    ('Turner Group', 'ntolley0@blogtalkradio.com', '5 Onsgard Avenue');
+    
 DROP TABLE IF EXISTS CungCapVatTu;
 CREATE TABLE CungCapVatTu (
-  MaNhaCungCap VARCHAR(7) NOT NULL,
-  MaLoaiVatTu VARCHAR(6) NOT NULL,
-  MaChiNhanh VARCHAR(10) NOT NULL,
+    MaNhaCungCap VARCHAR(7) NOT NULL,
+    MaLoaiVatTu VARCHAR(6) NOT NULL,
+    MaChiNhanh VARCHAR(5) NOT NULL,
+    PRIMARY KEY (MaLoaiVatTu , MaChiNhanh),
+    FOREIGN KEY (MaChiNhanh)
+        REFERENCES ChiNhanh (MaChiNhanh),
+    FOREIGN KEY (MaLoaiVatTu)
+        REFERENCES LoaiVatTu (MaLoaiVatTu),
+    FOREIGN KEY (MaNhaCungCap)
+        REFERENCES NhaCungCap (MaNhaCungCap)
+)
 
-  PRIMARY KEY  (MaLoaiVatTu, MaChiNhanh),
-	
-  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh),
-  FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu),
-  FOREIGN KEY (MaNhaCungCap) REFERENCES NhaCungCap(MaNhaCungCap)
-);
-
-                                                               
+INSERT INTO CungCapVatTu(MaNhaCungCap, MaLoaiVatTu, MaChiNhanh)
+VALUES
+	('NCC0001', 'VT0001', 'CN1'), ('NCC0001', 'VT0002', 'CN1'),
+    ('NCC0001', 'VT0001', 'CN2'), ('NCC0001', 'VT0002', 'CN2'),
+    ('NCC0002', 'VT0001', 'CN3'), ('NCC0002', 'VT0002', 'CN3'),
+    ('NCC0002', 'VT0001', 'CN4'), ('NCC0002', 'VT0002', 'CN4'),
+    ('NCC0003', 'VT0001', 'CN5'), ('NCC0003', 'VT0002', 'CN5'),
+    
+    ('NCC0004', 'VT0004', 'CN1'), ('NCC0004', 'VT0005', 'CN1'),
+    ('NCC0004', 'VT0004', 'CN2'), ('NCC0004', 'VT0005', 'CN2'),
+    ('NCC0005', 'VT0004', 'CN3'), ('NCC0005', 'VT0005', 'CN3'),
+    ('NCC0005', 'VT0004', 'CN4'), ('NCC0005', 'VT0005', 'CN4'),
+    ('NCC0006', 'VT0004', 'CN5'), ('NCC0006', 'VT0005', 'CN5'),
+    
+    ('NCC0007', 'VT0006', 'CN1'), ('NCC0007', 'VT0007', 'CN1'),
+    ('NCC0007', 'VT0006', 'CN2'), ('NCC0007', 'VT0007', 'CN2'),
+    ('NCC0007', 'VT0006', 'CN3'), ('NCC0007', 'VT0007', 'CN3'),
+    ('NCC0007', 'VT0006', 'CN4'), ('NCC0007', 'VT0007', 'CN4'),
+    ('NCC0007', 'VT0006', 'CN5'), ('NCC0007', 'VT0007', 'CN5');
+    
+    
 -- ---------------------------------- Khách Hàng ---------------------------------------------
 DROP TABLE IF EXISTS KhachHang;
 CREATE TABLE KhachHang(
@@ -398,6 +470,7 @@ VALUES
   ("KH000003", 'PERSONAL PACKAGE', '2022-11-28 12:00:00', '2022-11-28 14:00:00', 5000);
 
 -- --------------------------------- Đơn Đặt Phòng ---------------------------------------------
+sssssssssssssssssssssssssssssssssssssssssssssssss
 DROP TABLE IF EXISTS DonDatPhong;
 CREATE TABLE DonDatPhong(
 	MaDatPhong VARCHAR(16) NOT NULL,
@@ -484,13 +557,14 @@ CREATE TABLE HoaDon(
     
 	PRIMARY KEY (MaHoaDon),
 	CONSTRAINT fk_HoaDon_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
+
 );
 
 DROP TABLE IF EXISTS HoaDon_ID;
 CREATE TABLE HoaDon_ID (
 	ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT
 );
-
+sssssssssssssssssssssssssssssss
 DROP TRIGGER IF EXISTS before_hoadon_insert; 
 DELIMITER %%
 CREATE TRIGGER before_hoadon_insert BEFORE INSERT ON HoaDon
@@ -634,6 +708,7 @@ CREATE TABLE LoaiHangDoLuuNiem (
   CHECK (MaDichVu LIKE 'DNM%')
 );
 
+
 INSERT INTO LoaiHangDoLuuNiem (MaDichVu, LoaiHang)
 VALUES
 	('DNM009', 'batman toy'),
@@ -664,16 +739,14 @@ VALUES
   ('DNM010', 'Elise'),
   ('DNM010', 'CANVAS'),
   ('DNM010', 'LV');
-  
--- Dịch Vụ Spa ---------------------------------------------
--- Loại Hàng Đồ Lưu Niệm ---------------------------------------------
--- Thương Hiệu Đồ Lưu Niệm ---------------------------------------------
--- Mặt Bằng ---------------------------------------------
+
+
+DROP TABLE IF EXISTS MatBang;
 CREATE TABLE MatBang(
-	MaChiNhanh INT,
-    STTMatBang INT UNSIGNED UNIQUE NOT NULL DEFAULT 1,
+	MaChiNhanh VARCHAR(5) NOT NULL,
+    STTMatBang INT UNSIGNED NOT NULL,
 	GiaThue INT NOT NULL,
-    MaDichVu INT(3) UNSIGNED ZEROFILL,
+    MaDichVu VARCHAR(6) DEFAULT NULL,
     
     PRIMARY KEY (MaChiNhanh, STTMatBang)
 );
@@ -686,11 +759,24 @@ ALTER TABLE MatBang
 															ON UPDATE CASCADE
 															ON DELETE SET NULL,
 	ADD CONSTRAINT ck_STTMatBang CHECK (STTMatBang <= 50);
+    
+INSERT INTO MatBang(MaChiNhanh, STTMatBang, GiaThue, MaDichVu)
+VALUES
+	('CN1',1, '39719', 'DVR001'),
+	('CN1',2, '20534', 'DVR002'),
+    ('CN2',1, '84479', 'DVR003'),
+    ('CN3',1, '36734', 'DNS005'),
+    ('CN3',2, '48631', 'DVM010'),
+    ('CN4',1, '36734', 'DVB011'),
+    ('CN4',2, '36734', 'DNC007'),
+    ('CN5',1, '90321', 'DVS004');
+    
 -- Hình Ảnh Cửa Hàng ---------------------------------------------
+DROP TABLE IF EXISTS HinhAnhCuaHang;
 CREATE TABLE HinhAnhCuaHang(
-	MaChiNhanh INT,
+	MaChiNhanh VARCHAR(5),
     STTMatBang INT UNSIGNED NOT NULL,
-    HinhAnh VARCHAR(255),
+    HinhAnh VARCHAR(128),
     
     PRIMARY KEY (MaChiNhanh, STTMatBang, HinhAnh)
 );
@@ -699,10 +785,23 @@ CREATE TABLE HinhAnhCuaHang(
 	ADD CONSTRAINT fk_HinhAnhCH_MatBang FOREIGN KEY (MaChiNhanh, STTMatBang) REFERENCES MatBang(MaChiNhanh, STTMatBang)
 																   ON UPDATE CASCADE
 																   ON DELETE CASCADE;
-                                                                   
+
+                                                        
+INSERT INTO HinhAnhCuaHang(MaChiNhanh, STTMatBang, HinhAnh)
+VALUES
+	('CN1',1, '/home/image/cn1/1.png'),
+	('CN1',2, '/home/image/cn1/2.png'),
+    ('CN2',1, '/home/image/cn2/1.png'),
+    ('CN3',1, '/home/image/cn3/1.png'),
+    ('CN3',2, '/home/image/cn3/2.png'),
+    ('CN4',1, '/home/image/cn4/1.png'),
+    ('CN4',2, '/home/image/cn4/2.png'),
+    ('CN5',1, '/home/image/cn5/1.png');
+
 -- ----------------------------- Khung Giờ Hoạt Động Cửa Hàng ---------------------------------------------
+DROP TABLE IF EXISTS KhungGioHoatDong;
 CREATE TABLE KhungGioHoatDong(
-	MaChiNhanh INT,
+	MaChiNhanh VARCHAR(5),
     STTMatBang INT UNSIGNED NOT NULL,
     GioBatDau TIME,
     GioKetThuc TIME,
@@ -715,4 +814,14 @@ ALTER TABLE KhungGioHoatDong
 																   ON UPDATE CASCADE
 																   ON DELETE CASCADE;
 
+INSERT INTO KhungGioHoatDong(MaChiNhanh, STTMatBang, GioBatDau, GioKetThuc)
+VALUES
+	('CN1',1, '7:30:00', "9:30:00"),
+	('CN1',2, '7:30:00', "9:30:00"),
+    ('CN2',1, '7:30:00', "9:30:00"),
+    ('CN3',1, '7:30:00', "9:30:00"),
+    ('CN3',2, '7:30:00', "9:30:00"),
+    ('CN4',1, '7:30:00', "9:30:00"),
+    ('CN4',2,'00:00:00', "24:00:00"),
+    ('CN5',1, '7:30:00', "9:30:00");
 
