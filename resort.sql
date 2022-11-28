@@ -1,3 +1,4 @@
+SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS ChiNhanh;
 CREATE TABLE ChiNhanh (
     MaChiNhanh VARCHAR(5) NOT NULL,
@@ -310,133 +311,283 @@ CREATE TABLE CungCapVatTu (
 
                                                                
 -- ---------------------------------- Khách Hàng ---------------------------------------------
-create table KhachHang(
-    MaKhachHang int(6) unsigned zerofill not null auto_increment,
-	prefix char(2) not null,
-    CCCD varchar(12) not null unique,
-    SoDienThoai varchar(12) not null unique,
-    Email varchar(127) unique,
-    Username varchar(127) unique,
-    Diem int not null default 0,
-    Loai int not null default 1,
+DROP TABLE IF EXISTS KhachHang;
+CREATE TABLE KhachHang(
+    MaKhachHang VARCHAR(8),
+    CCCD VARCHAR(12) NOT NULL UNIQUE,
+    HoVaTen VARCHAR(50) NOT NULL,
+    DienThoai VARCHAR(12) NOT NULL UNIQUE,
+    Email VARCHAR(127) UNIQUE,
+    Username VARCHAR(127) UNIQUE,
+    Password VARCHAR(50) NOT NULL,
+    Diem INT NOT NULL DEFAULT 0,
+    Loai INT NOT NULL DEFAULT 1,
     
-    primary key (MaKhachHang),
-    unique key (prefix, MaKhachHang),
+    PRIMARY KEY (MaKhachHang),
     
-    Constraint ck_Diem check (Diem >= 1 and Diem <= 4)
+    CHECK (Loai >= 1 and Loai <= 4)
 );
 
--- --------------------------------- Gói Dich Vụ ---------------------------------------------
-CREATE TABLE GoiDichVu(
-	TenGoi VARCHAR(127) NOT NULL UNIQUE,
-    SoNgay INT NOT NULL,
-    SoKhach INT NOT NULL,
-    Gia DOUBLE,
-    
-    PRIMARY KEY (TenGoi),
-    CONSTRAINT ck_SoNgay CHECK (SoNgay >=1 and SoNgay <= 100),
-    CONSTRAINT ck_SoKhach CHECK (SoKhach >= 1 and SoKhach <= 10)
+DROP TABLE IF EXISTS KhachHang_ID;
+CREATE TABLE KhachHang_ID (
+	ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT
 );
--- -------------------------------- Hóa Đơn Gói Dịch Vụ ---------------------------------------------
-CREATE TABLE HoaDonGoiDichVu(
-	MaKhachHang INT(6) unsigned zerofill not null,
-	TenGoi VARCHAR(127) NOT NULL,
-    NgayGioMua DATETIME ,
-    NgayBatDau DATETIME ,
-    TongTien DOUBLE NOT NULL,
+
+DROP TRIGGER IF EXISTS before_khachhang_insert;
+DELIMITER %%
+CREATE TRIGGER before_khachhang_insert BEFORE INSERT ON KhachHang
+	FOR EACH ROW
+		BEGIN
+			INSERT INTO KhachHang_ID VALUE ();
+      SET NEW.MaKhachHang = CONCAT("KH", LPAD(LAST_INSERT_ID(), 6, "0"));
+    END %%
+	
+DELIMITER ;
+
+INSERT INTO KhachHang (CCCD, HoVaTen, DienThoai, Email, Username, Password, Diem, Loai)
+VALUES
+	('342056301', 'Nguyen Cong Dat', '0828696919', 'datdev2409@gmail.com', 'congdat2409', 'idontsay', 0, 1),
+  ('123654987', 'Nguyen Van A', '0982872456', 'vana123@gmail.com', 'vana123', 'hiddenpass', 500, 2),
+  ('098123845', 'Tran Thi B', '082813426', 'thib098@gmail.com', 'thib098', 'password456', 800, 3),
+  ('333444555', 'Le Van C', '082838920', 'vanc3344@gmail.com', 'vanc3344', 'password123', 1000, 4);
+
+
+-- --------------------------------- Gói Dich Vụ ---------------------------------------------
+DROP TABLE IF EXISTS GoiDichVu;
+CREATE TABLE GoiDichVu(
+	TenGoi VARCHAR(30) NOT NULL UNIQUE,
+	SoNgay INT NOT NULL,
+	SoKhach INT NOT NULL,
+	Gia INT NOT NULL,
     
-    PRIMARY KEY (MaKhachHang, TenGoi, NgayGioMua),
+	PRIMARY KEY (TenGoi),
+	CONSTRAINT ck_SoNgay CHECK (SoNgay >=1 and SoNgay <= 100),
+	CONSTRAINT ck_SoKhach CHECK (SoKhach >= 1 and SoKhach <= 10)
+);	
+
+INSERT INTO GoiDichVu (TenGoi, SoNgay, SoKhach, Gia)
+VALUES
+	('BUSINESS PACKAGE', 30, 2, 20000),
+  ('PERSONAL PACKAGE', 10, 1, 5000),
+  ('FAMILY PACKAGE', 20, 4, 10000);
+  
+-- -------------------------------- Hóa Đơn Gói Dịch Vụ ---------------------------------------------
+DROP TABLE IF EXISTS HoaDonGoiDichVu;
+CREATE TABLE HoaDonGoiDichVu(
+	MaKhachHang VARCHAR(8) NOT NULL,
+	TenGoi VARCHAR(30) NOT NULL,
+	NgayGioMua DATETIME,
+	NgayBatDau DATETIME,
+	TongTien INT NOT NULL,
+    
+	PRIMARY KEY (MaKhachHang, TenGoi, NgayGioMua),
 	CONSTRAINT fk_HoaDonGoiDV_KH FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 															 ON UPDATE CASCADE
 															 ON DELETE NO ACTION,
-    CONSTRAINT fk_HoaDonGoiDV_GoiDV FOREIGN KEY (TenGoi) REFERENCES GoiDichVu(TenGoi)
+	CONSTRAINT fk_HoaDonGoiDV_GoiDV FOREIGN KEY (TenGoi) REFERENCES GoiDichVu(TenGoi)
 														 ON UPDATE CASCADE
 														 ON DELETE NO ACTION,
     
-    CONSTRAINT ck_BatDau_KetThuc CHECK (NgayBatDau > NgayGioMua)
+	CONSTRAINT ck_BatDau_KetThuc CHECK (NgayBatDau > NgayGioMua)
 );
 
+INSERT INTO HoaDonGoiDichVu (MaKhachHang, TenGoi, NgayGioMua, NgayBatDau, TongTien)
+VALUES
+	("KH000001", 'FAMILY PACKAGE', '2022-11-28 08:00:00', '2022-11-28 10:00:00', 10000),
+  ("KH000002", 'BUSINESS PACKAGE', '2022-11-25 08:00:00', '2022-11-25 15:00:00', 20000),
+  ("KH000003", 'PERSONAL PACKAGE', '2022-11-28 12:00:00', '2022-11-28 14:00:00', 5000);
+
 -- --------------------------------- Đơn Đặt Phòng ---------------------------------------------
+DROP TABLE IF EXISTS DonDatPhong;
 CREATE TABLE DonDatPhong(
-	Prefix CHAR(2) NOT NULL,
-    MaDatPhong INT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-    NgayGioDat DATETIME NOT NULL,
-    NgayNhanPhong DATETIME NOT NULL,
-    NgayTraPhong DATETIME NOT NULL,
-    TinhTrang INT(1) NOT NULL DEFAULT 0,
-    TongTien INT UNSIGNED NOT NULL DEFAULT 0,
-    MaKhachHang INT(6) UNSIGNED ZEROFILL NOT NULL,
-    TenGoiDichVu VARCHAR(127) NOT NULL,
+	MaDatPhong VARCHAR(16) NOT NULL,
+	NgayGioDat DATETIME NOT NULL,
+  SoKhach INT NOT NULL,
+	NgayNhanPhong DATE NOT NULL,
+	NgayTraPhong DATE NOT NULL,
+	TinhTrang INT(1) NOT NULL DEFAULT 0,
+	TongTien INT UNSIGNED NOT NULL DEFAULT 0,
+	MaKhachHang VARCHAR(8),
+	TenGoiDichVu VARCHAR(127) NOT NULL,
     
-    PRIMARY KEY (MaDatPhong),
-    CONSTRAINT fk_DonDatPhong_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+	PRIMARY KEY (MaDatPhong),
+	CONSTRAINT fk_DonDatPhong_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 																  ON UPDATE CASCADE
 																  ON DELETE NO ACTION,
 	CONSTRAINT fk_DonDatPhong_GoiDichVu FOREIGN KEY (TenGoiDichVu) REFERENCES GoiDichVu(TenGoi)
 																   ON UPDATE CASCADE
 																   ON DELETE NO ACTION,
                          
-    CONSTRAINT ck_NhanPhong_DatPhong CHECK (NgayNhanPhong > NgayGioDat),
-    CONSTRAINT ck_TraPhong_NhanPhong CHECK (NgayTraPhong > NgayNhanPhong),
-    CONSTRAINT ck_TinhTrang CHECK (TinhTrang >= 0 AND TinhTrang <= 3)
+	CONSTRAINT ck_NhanPhong_DatPhong CHECK (NgayNhanPhong > NgayGioDat),
+	CONSTRAINT ck_TraPhong_NhanPhong CHECK (NgayTraPhong > NgayNhanPhong),
+	CONSTRAINT ck_TinhTrang CHECK (TinhTrang >= 0 AND TinhTrang <= 3)
 );
+
+DROP TABLE IF EXISTS DonDatPhong_ID;
+CREATE TABLE DonDatPhong_ID (
+	ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT
+);
+
+
+DROP TRIGGER IF EXISTS before_dondatphong_insert; 
+DELIMITER %%
+CREATE TRIGGER before_dondatphong_insert BEFORE INSERT ON DonDatPhong
+FOR EACH ROW
+	BEGIN
+		INSERT INTO DonDatPhong_ID VALUE ();
+    SET NEW.MaDatPhong = CONCAT("DP", DATE_FORMAT(NEW.NgayGioDat, '%d%m%Y'), LPAD(LAST_INSERT_ID(), 6, '0'));
+  END %%
+DELIMITER ;
+
+INSERT INTO DonDatPhong(NgayGioDat, SoKhach, NgayNhanPhong, NgayTraPhong, TinhTrang, TongTien, MaKhachHang, TenGoiDichVu)
+VALUES
+  ('2022-03-8 23:56:29', 92, '2022-03-10', '2022-03-12', 0, 3508, 'KH000001', 'FAMILY PACKAGE'),
+  ('2022-8-13 03:58:21', 71, '2022-09-19', '2022-11-21', 3, 4103, 'KH000003', 'FAMILY PACKAGE'),
+  ('2022-8-30 19:50:54', 19, '2022-10-17', '2022-11-17', 3, 2069, 'KH000004', 'FAMILY PACKAGE'),
+  ('2022-2-28 01:37:17', 17, '2022-03-11', '2022-05-10', 3, 1363, 'KH000002', 'BUSINESS PACKAGE'),
+  ('2022-02-22 15:51:52', 7, '2022-02-23', '2022-02-24', 3, 3365, 'KH000002', 'BUSINESS PACKAGE');
+  
 
 -- --------------------------------- Phòng Thuê ----------------------------------------------------
+DROP TABLE IF EXISTS PhongThue;
 CREATE TABLE PhongThue(
-	MaDatPhong INT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-    MaChiNhanh INT NOT NULL,
-    SoPhong VARCHAR(16) NOT NULL,
+	MaDatPhong VARCHAR(16),
+	MaChiNhanh VARCHAR(5),
+	SoPhong VARCHAR(3) NOT NULL,
 	
     
-    PRIMARY KEY (MaDatPhong, SoPhong, MaChiNhanh),
-    CONSTRAINT fk_PhongThue_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
+	PRIMARY KEY (MaDatPhong, SoPhong, MaChiNhanh),
+	CONSTRAINT fk_PhongThue_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
 															 ON UPDATE CASCADE
-															 ON DELETE NO ACTION,
+															 ON DELETE CASCADE,
 	CONSTRAINT fk_PhongThue_Phong FOREIGN KEY (MaChiNhanh, SoPhong) REFERENCES Phong(MaChiNhanh, SoPhong)
 																   ON UPDATE CASCADE
-																   ON DELETE NO ACTION
+																   ON DELETE CASCADE
 );
+
+INSERT INTO PhongThue (MaDatPhong, MaChiNhanh, SoPhong)
+VALUES
+	('DP08032022000003', 'CN1', '101'),
+  ('DP13082022000004', 'CN2', '101'),
+  ('DP22022022000007', 'CN3', '201'),
+  ('DP28022022000006', 'CN4', '102'),
+  ('DP30082022000005', 'CN5', '501');
+
 -- ------------------------------------- Hóa Đơn ---------------------------------------------
+
+DROP TABLE IF EXISTS HoaDon;
 CREATE TABLE HoaDon(
-	MaHoaDon INT(6) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-    NgayNhanPhong DATETIME NOT NULL, 
-    NgayTraPhong DATETIME NOT NULL,
-    MaDatPhong INT(6) UNSIGNED ZEROFILL NOT NULL,
-    -- Tạo Trigger
+	MaHoaDon VARCHAR(16),
+	ThoiGianNhanPhong TIME NOT NULL,
+  ThoiGianTraPhong TIME NOT NULL,
+	MaDatPhong VARCHAR(16),
     
-    PRIMARY KEY (MaHoaDon),
-    CONSTRAINT fk_HoaDon_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
+	PRIMARY KEY (MaHoaDon),
+	CONSTRAINT fk_HoaDon_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
 );
+
+DROP TABLE IF EXISTS HoaDon_ID;
+CREATE TABLE HoaDon_ID (
+	ID INT NOT NULL PRIMARY KEY AUTO_INCREMENT
+);
+
+DROP TRIGGER IF EXISTS before_hoadon_insert; 
+DELIMITER %%
+CREATE TRIGGER before_hoadon_insert BEFORE INSERT ON HoaDon
+FOR EACH ROW
+	BEGIN
+		INSERT INTO HoaDon_ID VALUE ();
+    SET NEW.MaHoaDon = CONCAT("HD", DATE_FORMAT(NOW(), '%d%m%Y'), LPAD(LAST_INSERT_ID(), 6, '0'));
+--     SET NEW.ThoiGianNhanPhong = CONCAT(NEW.ThoiGianNhanPhong, ':00');
+-- 		SET NEW.ThoiGianTraPhong = CONCAT(NEW.ThoiGianTraPhong, ':00');
+  END %%
+DELIMITER ;
+
+INSERT INTO HoaDon (MaDatPhong, ThoiGianNhanPhong, ThoiGianTraPhong)
+VALUES
+	('DP08032022000003', '8:30', '12:00'),
+  ('DP13082022000004', '13:00', '17:00'),
+  ('DP22022022000007', '7:40', '12:20'),
+  ('DP28022022000006', '6:50', '8:30'),
+  ('DP30082022000005', '9:40', '10:10');
+
+
 -- ---------------------------------- Doanh Nghiệp ---------------------------------------------
+DROP TABLE IF EXISTS DoanhNghiep;
 CREATE TABLE DoanhNghiep(
-	Prefix VARCHAR(2) DEFAULT "DN",
-	MaDoanhNghiep INT(4) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-    TenDoanhNghiep VARCHAR(127) NOT NULL,
+	MaDoanhNghiep VARCHAR(6),
+	TenDoanhNghiep VARCHAR(30) NOT NULL,
     
-    PRIMARY KEY (MaDoanhNghiep)
+	PRIMARY KEY (MaDoanhNghiep)
 );
+
+DROP TABLE IF EXISTS DoanhNghiep_ID;
+CREATE TABLE DoanhNghiep_ID(
+	ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+);
+
+DROP TRIGGER IF EXISTS before_doanhnghiep_insert;
+DELIMITER %%
+CREATE TRIGGER before_doanhnghiep_insert BEFORE INSERT ON DoanhNghiep
+FOR EACH ROW
+	BEGIN
+		INSERT INTO DoanhNghiep_ID VALUE ();
+        SET NEW.MaDoanhNghiep = CONCAT("DN", LPAD(LAST_INSERT_ID(), 4, '0'));
+    END %%
+    
+DELIMITER ;
+
+INSERT INTO DoanhNghiep (TenDoanhNghiep)
+VALUES
+	('Lotte'), ('KichiKichi'), ('SUMO BBQ'), 
+  ('Hoang Gia'), ('Heaven'),
+  ('Circile K'), ('Vinmart'), ('GS25'),
+  ('Alibaba'), ('Kitty Store'), ('XPOSE');
 
 -- ------------------------------------- Dịch Vụ ------------------------------------------------
+DROP TABLE IF EXISTS DichVu;
 CREATE TABLE DichVu(
-	Prefix VARCHAR(2) DEFAULT "DV",
-	MaDichVu INT(3) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-	LoaiDichVu CHAR NOT NULL,
-    SoKhach INT,
-    PhongCach VARCHAR(127),
-    MaDoanhNghiep INT(4) UNSIGNED ZEROFILL NOT NULL,
+	MaDichVu VARCHAR(6),
+	LoaiDichVu VARCHAR(1) NOT NULL,
+	SoKhach INT,
+	PhongCach VARCHAR(127),
+	MaDoanhNghiep VARCHAR(6),
     
-    PRIMARY KEY (MaDichVu)
+	PRIMARY KEY (MaDichVu),
+  FOREIGN KEY (MaDoanhNghiep) REFERENCES DoanhNghiep(MaDoanhNghiep)
 );
 
-ALTER TABLE DichVu
-	ADD CONSTRAINT ck_DichVu CHECK (STRCMP(LoaiDichVu,"R")
-									OR STRCMP(LoaiDichVu,"S") 
-                                    OR STRCMP(LoaiDichVu,"C") 
-                                    OR STRCMP(LoaiDichVu,"M") 
-                                    OR STRCMP(LoaiDichVu,"B")),
-	ADD CONSTRAINT fk_DichVu FOREIGN KEY (MaDoanhNghiep) REFERENCES DoanhNghiep(MaDoanhNghiep)
-														 ON UPDATE CASCADE
-                                                         ON DELETE CASCADE;
+DROP TABLE IF EXISTS DichVu_ID;
+CREATE TABLE DichVu_ID(
+	ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
+);
+
+DROP TRIGGER IF EXISTS before_dichvu_insert;
+DELIMITER %%
+CREATE TRIGGER before_dichvu_insert BEFORE INSERT ON DichVu
+FOR EACH ROW
+	BEGIN
+		INSERT INTO DichVu_ID VALUE ();
+			SET NEW.MaDichVu = CONCAT("DN", NEW.LoaiDichVu, LPAD(LAST_INSERT_ID(), 3, '0'));
+	END %%
+    
+DELIMITER ;
+
+INSERT INTO DichVu (LoaiDichVu, SoKhach, PhongCach, MaDoanhNghiep)
+VALUES 
+	('R', '30', 'fast food', 'DN0001'),
+  ('R', '40', 'hotpot', 'DN0002'),
+	('R', '50', 'bbq and beer', 'DN0003'),
+	('S', '10', 'spa, massage', 'DN0004'),
+	('S', '8', 'spa, massage, meditation', 'DN0005'),
+	('C', '10', 'convenience store', 'DN0006'),
+	('C', '12', 'convenience store', 'DN0007'),
+	('C', '20', 'convenience store', 'DN0008'),
+	('M', '7', 'boy shop', 'DN0009'),
+	('M', '5', 'kitty shop', 'DN0010'),
+  ('B', '20', 'buffet bear and bar', 'DN0011');
+  
+
 
 -- Dịch Vụ Spa ---------------------------------------------
 -- Loại Hàng Đồ Lưu Niệm ---------------------------------------------
