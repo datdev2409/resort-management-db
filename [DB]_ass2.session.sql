@@ -271,3 +271,6 @@ CREATE TABLE CungCapVatTu (
   FOREIGN KEY (MaNhaCungCap) REFERENCES NhaCungCap(MaNhaCungCap)
 );
 
+
+
+

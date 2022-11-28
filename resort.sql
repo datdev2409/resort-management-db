@@ -57,6 +57,7 @@ VALUES
 
 
 DROP TABLE IF EXISTS Khu;
+
 CREATE TABLE Khu (
   MaChiNhanh VARCHAR(10),
   TenKhu VARCHAR(16) NOT NULL,
@@ -101,9 +102,9 @@ CREATE TABLE LoaiPhong(
 INSERT INTO LoaiPhong(TenLoaiPhong, DienTich, SoKhach, MoTa)
 VALUES
   ('President', 60.5, '1', 'The most ornate rooms in the resort'),
-  ('King Room', 50, '1', 'A room with a king-size bed'),
-  ('Queen Room', 40, '1', 'A room with a queen-size bed'),
-  ('Family', 30, '4', 'Room for standard family (4 people)'),
+  ('King Room', 50, '1', 'A well-furnished room with king-size bed'),
+  ('Queen Room', 40, '1', 'A well-furnished room with queen-size bed'),
+  ('Family', 30, '4', 'Standard room for family (4 people)'),
   ('Couple', 28, '2', 'The romantic asmosphere for couple'),
   ('Double', 25, '2', 'Standard room for 2 people'),
   ('Single', 20, '1', 'Standard room for 1 person');
@@ -134,46 +135,46 @@ VALUES
 DROP TABLE IF EXISTS ChiNhanh_LoaiPhong;
 CREATE TABLE ChiNhanh_LoaiPhong (
 	MaChiNhanh VARCHAR(5),
-  MaLoaiPhong INT,
-  GiaThue INT NOT NULL,
-  PRIMARY KEY (MaLoaiPhong, MaChiNhanh),
-  FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong),
-  FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
+	MaLoaiPhong INT,
+	GiaThue INT NOT NULL,
+	PRIMARY KEY (MaLoaiPhong, MaChiNhanh),
+	FOREIGN KEY (MaLoaiPhong) REFERENCES LoaiPhong(MaLoaiPhong),
+	FOREIGN KEY (MaChiNhanh) REFERENCES ChiNhanh(MaChiNhanh)
 );
 
 INSERT INTO ChiNhanh_LoaiPhong (MaChiNhanh, MaLoaiPhong, GiaThue)
 VALUES
-  ("CN1", 4, 500),
-  ("CN1", 5, 350),
+	("CN1", 4, 500),
+	("CN1", 5, 350),
 	("CN1", 6, 300),
-  ("CN1", 7, 200),
+	("CN1", 7, 200),
   
-  ("CN2", 4, 500),
-  ("CN2", 5, 350),
-  ("CN2", 6, 300),
-  ("CN2", 7, 200),
+	("CN2", 4, 500),
+	("CN2", 5, 350),
+	("CN2", 6, 300),
+	("CN2", 7, 200),
   
-  ("CN3", 2, 1000),
-  ("CN3", 3, 900),
+	("CN3", 2, 1000),
+	("CN3", 3, 900),
 	("CN3", 4, 500),
-  ("CN3", 5, 350),
-  ("CN3", 6, 300),
-  ("CN3", 7, 200),
+	("CN3", 5, 350),
+	("CN3", 6, 300),
+	("CN3", 7, 200),
 	
-  ("CN4", 2, 1000),
-  ("CN4", 3, 900),
+	("CN4", 2, 1000),
+	("CN4", 3, 900),
 	("CN4", 4, 500),
-  ("CN4", 5, 350),
-  ("CN4", 6, 300),
-  ("CN4", 7, 200),
+	("CN4", 5, 350),
+	("CN4", 6, 300),
+	("CN4", 7, 200),
   
-  ("CN5", 1, 7000),
-  ("CN5", 2, 1200),
-  ("CN5", 3, 1000),
+	("CN5", 1, 7000),
+	("CN5", 2, 1200),
+	("CN5", 3, 1000),
 	("CN5", 4, 700),
-  ("CN5", 5, 450),
-  ("CN5", 6, 300),
-  ("CN5", 7, 200);
+	("CN5", 5, 450),
+	("CN5", 6, 300),
+	("CN5", 7, 200);
   
   
 SELECT * FROM ChiNhanh_LoaiPhong
@@ -207,12 +208,10 @@ VALUES
   ("CN5", "505", "Vip", 2),
   ("CN5", "601", "Vip", 1);
 
-SELECT * FROM Phong;
-
 DROP TABLE IF EXISTS LoaiVatTu;
 CREATE TABLE LoaiVatTu (
   MaLoaiVatTu VARCHAR(6),
-  TenLoaiVatTu VARCHAR(16) NOT NULL,
+  TenLoaiVatTu VARCHAR(25) NOT NULL,
 
   PRIMARY KEY (MaLoaiVatTu)
 );
@@ -235,14 +234,14 @@ DELIMITER ;
 INSERT INTO LoaiVatTu (TenLoaiVatTu)
 VALUES
 	("Ghe"), 
-  ("Nem"), 
-  ("Giuong"), 
-  ("Sofa"),
-  ("TV"),
-  ("TuLanh"),
-  ("PS5");
+	("Sofa"),
+	("TV"),
+    ("May Lanh"),
+	("Tu Lanh"),
+	("PS5"),
+    ("Khăn"),
+    ("Bo ve sinh ca nhan");
     
-
 DROP TABLE IF EXISTS LoaiVatTu_LoaiPhong;
 CREATE TABLE LoaiVatTu_LoaiPhong (
   MaLoaiVatTu VARCHAR(6),
@@ -255,12 +254,22 @@ CREATE TABLE LoaiVatTu_LoaiPhong (
   CHECK (SoLuong >= 1 AND SoLuong <= 20)
 );
 
+INSERT INTO LoaiVatTu_LoaiPhong(MaLoaiPhong, MaLoaiVatTu, SoLuong)
+VALUE
+	("7", "VT0002", 1), ("7", "VT0003", 1), ("7", "VT0006", 1), ("7", "VT0007", 1),
+    ("6", "VT0002", 1), ("6", "VT0003", 1), ("6", "VT0004", 1), ("6", "VT0006", 2), ("6", "VT0007", 2),
+    ("5", "VT0001", 1), ("5", "VT0002", 1), ("5", "VT0003", 1), ("5", "VT0004", 1), ("5", "VT0005", 1), ("5", "VT0006", 2), ("5", "VT0007", 2),
+    ("4", "VT0002", 1), ("4", "VT0003", 1), ("4", "VT0004", 1), ("4", "VT0005", 1), ("4", "VT0006", 2), ("4", "VT0007", 2),
+    ("3", "VT0002", 1), ("3", "VT0003", 1), ("3", "VT0004", 1), ("3", "VT0005", 1), ("3", "VT0006", 2), ("3", "VT0007", 2),
+    ("2", "VT0002", 1), ("2", "VT0003", 1), ("2", "VT0004", 1), ("2", "VT0005", 1), ("2", "VT0006", 2), ("2", "VT0007", 2),
+    ("1", "VT0002", 1), ("1", "VT0003", 1), ("1", "VT0004", 1), ("1", "VT0005", 1), ("1", "VT0006", 2), ("1", "VT0007", 2);
+
 DROP TABLE IF EXISTS VatTu;
 CREATE TABLE  VatTu (
-  MaChiNhanh VARCHAR(10),
+  MaChiNhanh VARCHAR(5),
   MaLoaiVatTu VARCHAR(6),
   STTVatTu INT UNSIGNED NOT NULL,
-  SoPhong VARCHAR(16) NOT NULL,
+  SoPhong VARCHAR(3) NOT NULL,
   TinhTrang TEXT,
 
   PRIMARY KEY (MaChiNhanh, MaLoaiVatTu, STTVatTu),
@@ -269,6 +278,25 @@ CREATE TABLE  VatTu (
   FOREIGN KEY (MaLoaiVatTu) REFERENCES LoaiVatTu(MaLoaiVatTu)
 );
 
+INSERT INTO VatTu(MaChiNhanh, MaLoaiVatTu, STTVatTu, SoPhong, TinhTrang)
+VALUES
+	("CN1", "VT0001", 1, "101", "Nguyen Ven"), ("CN1", "VT0001", 2, "102", "Nguyen Ven"), ("CN1", "VT0001", 3, "103", "Hoi phai mau ben canh phai"),	
+    ("CN1", "VT0002", 1, "101", "Nguyen Ven"), ("CN1", "VT0002", 2, "102", "Hoi phai mau ben canh trai"), ("CN1", "VT0002", 3, "103", "Nguyen Ven"),	
+
+    ("CN2", "VT0001", 1, "101", "Nguyen Ven"), ("CN2", "VT0001", 2, "101", "Nguyen Ven"),
+    ("CN2", "VT0002", 1, "101", "Nguyen Ven"), ("CN2", "VT0002", 2, "101", "Nguyen Ven"),
+    ("CN2", "VT0003", 1, "101", "Nguyen Ven"), ("CN2", "VT0003", 2, "101", "Nguyen Ven"),
+    
+    ("CN3", "VT0006", 1, "101", "Da thay moi"), ("CN2", "VT0006", 2, "101", "Da thay moi"),
+    ("CN3", "VT0007", 1, "101", "Da thay moi"), ("CN2", "VT0007", 2, "101", "Da thay moi"),
+    
+    ("CN4", "VT0005", 1, "101", "Nguyen Ven"), ("CN2", "VT0005", 2, "101", "Bi hu 1 controller"),
+    ("CN4", "VT0003", 1, "101", "Nguyen Ven"), ("CN2", "VT0003", 2, "101", "Nguyen Ven"),
+    
+    ("CN5", "VT0006", 1, "101", "Da thay moi"), ("CN5", "VT0006", 2, "101", "Da thay moi"), ("CN5", "VT0005", 1, "102", "Nguyen Ven"),
+    ("CN5", "VT0004", 1, "101", "Day du thuc pham"), ("CN5", "VT0004", 2, 102, "Day du thuc pham"), ("CN5", "VT0004", 3, 103, "Thieu ruou vang, nuoc ngot"),
+    ("CN5", "VT0005", 1, "101", "Nguyen Ven"), ("CN5", "VT0005", 2, "102", "Nguyen Ven"), ("CN5", "VT0005", 3, "103", "Nguyen Ven");
+    
 DROP TABLE IF EXISTS NhaCungCap;
 CREATE TABLE NhaCungCap (
   MaNhaCungCap VARCHAR(7) NOT NULL,
@@ -408,13 +436,27 @@ CREATE TABLE HoaDon(
     CONSTRAINT fk_HoaDon_DDPhong FOREIGN KEY (MaDatPhong) REFERENCES DonDatPhong(MaDatPhong)
 );
 -- ---------------------------------- Doanh Nghiệp ---------------------------------------------
+DROP TABLE IF EXISTS DoanhNghiep;
 CREATE TABLE DoanhNghiep(
-	Prefix VARCHAR(2) DEFAULT "DN",
-	MaDoanhNghiep INT(4) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
-    TenDoanhNghiep VARCHAR(127) NOT NULL,
+	MaDoanhNghiep VARCHAR(6),
+    TenDoanhNghiep VARCHAR(30) NOT NULL,
     
     PRIMARY KEY (MaDoanhNghiep)
 );
+
+CREATE TABLE DoanhNghiep_ID(
+	ID INT NOT NULL AUTO_INCREMENT
+);
+
+DELIMITER %%
+CREATE TRIGGER before_doanhnghiep_insert BEFORE INSERT ON DoanhNghiep
+FOR EACH ROW
+	BEGIN
+		INSERT INTO DoanhNghiep_ID VALUE ();
+        SET NEW.MaDoanhNghiep = CONCAT("DN", LPAD(LAST_INSERT_ID(), 6, '0'));
+    END %%
+    
+DELIMITER ;
 
 -- ------------------------------------- Dịch Vụ ------------------------------------------------
 CREATE TABLE DichVu(
