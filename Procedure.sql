@@ -1,22 +1,36 @@
-DROP PROCEDURE IF EXISTS proc_getSoNgayDaO;
+DROP FUNCTION IF EXISTS func_getSoNgayDaO;
 DELIMITER %%
-CREATE PROCEDURE proc_getSoNgayDaO(
-	IN MaKhachHang VARCHAR(8)
+CREATE FUNCTION func_getSoNgayDaO(
+	MaKhachHang VARCHAR(8),
+    TenGoi VARCHAR(30)
 )
+RETURNS INT
 BEGIN
-    SELECT 
-		DonDatPhong.NgayNhanPhong,
-		DonDatPhong.NgayTraPhong,
-        DonDatPhong.TongTien,
-        HoaDonGoiDichVu.NgayBatDau,
-		ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR ) AS NgayHetHan,
-		HoaDonGoiDichVu.TenGoi
-	FROM DonDatPhong
-	LEFT JOIN HoaDonGoiDichVu ON HoaDonGoiDichVu.MaKhachHang = DonDatPhong.MaKhachHang;
+	DECLARE SoNgayDaO INT DEFAULT 0;
+	IF(EXISTS(SELECT * FROM DonDatPhong WHERE DonDatPhong.MaKhachHang = MaKhachHang)) THEN
+        SELECT 
+        -- DonDatPhong.MaKhachHang,
+-- 		DonDatPhong.NgayNhanPhong,
+-- 		DonDatPhong.NgayTraPhong,
+--         DonDatPhong.TongTien,
+--         HoaDonGoiDichVu.NgayBatDau,
+-- 		ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR ) AS NgayHetHan,
+-- 		HoaDonGoiDichVu.TenGoi,
+--         DATEDIFF(DonDatPhong.NgayTraPhong, DonDatPhong.NgayNhanPhong) AS SoNgayO
+        SUM(DATEDIFF(DonDatPhong.NgayTraPhong, DonDatPhong.NgayNhanPhong)) INTO SoNgayDaO 
+		FROM DonDatPhong
+		LEFT JOIN HoaDonGoiDichVu ON HoaDonGoiDichVu.MaKhachHang = DonDatPhong.MaKhachHang
+		WHERE
+			DonDatPhong.MaKhachHang = MaKhachHang AND
+            HoaDonGoiDichVu.TenGoi = TenGoi AND
+			DonDatPhong.NgayNhanPhong > HoaDonGoiDichVu.NgayBatDau;
+	ELSE
+		RETURN 1;
+    END IF;
+    RETURN SoNgayDaO;
 END%%
 DELIMITER ;
 
-CALL proc_getSoNgayDaO("KH000001");
 
 -- Procedure for remaining time
 DROP PROCEDURE IF EXISTS proc_GoiDichVu;
@@ -31,7 +45,7 @@ BEGIN
             GoiDichVu.SoKhach,
             HoaDonGoiDichVu.NgayBatDau,
             ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR ) AS NgayHetHan,
-            DATEDIFF(ADDDATE(HoaDonGoiDichVu.NgayBatDau, GoiDichVu.SoNgay), CURRENT_TIMESTAMP()) AS SoNgayConLai
+            (GoiDichVu.SoNgay - func_getSoNgayDao(MaKhachHang, HoaDonGoiDichVu.TenGoi)) AS SoNgayConLai
             
 		FROM HoaDonGoiDichVu 
         LEFT JOIN GoiDichVu ON GoiDichVu.TenGoi = HoaDonGoiDichVu.TenGoi
@@ -45,4 +59,3 @@ DELIMITER ;
 
 CALL proc_GoiDichVu("KH000001");
 
-SELECT func_getSoNgayDaO("KH000001");

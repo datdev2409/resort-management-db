@@ -439,9 +439,9 @@ CREATE TABLE GoiDichVu(
 
 INSERT INTO GoiDichVu (TenGoi, SoNgay, SoKhach, Gia)
 VALUES
-	('BUSINESS PACKAGE', 100, 2, 20000),
-	('PERSONAL PACKAGE', 60, 1, 5000),
-	('FAMILY PACKAGE', 60, 4, 17000);
+	('BUSINESS PACKAGE', 80, 2, 20000),
+	('PERSONAL PACKAGE', 50, 1, 5000),
+	('FAMILY PACKAGE', 50, 4, 17000);
 	
 -- -------------------------------- Hóa Đơn Gói Dịch Vụ ---------------------------------------------
 DROP TABLE IF EXISTS HoaDonGoiDichVu;
@@ -516,11 +516,12 @@ DELIMITER ;
 
 INSERT INTO DonDatPhong(NgayGioDat, SoKhach, NgayNhanPhong, NgayTraPhong, TinhTrang, TongTien, MaKhachHang, TenGoiDichVu)
 VALUES
-  ('2022-03-8 23:56:29', 92, '2022-03-10', '2022-03-12', 0, 3508, 'KH000001', 'FAMILY PACKAGE'),
+  ('2022-03-8 23:56:29', 92, '2022-09-10', '2022-09-12', 0, 3508, 'KH000001', 'BUSINESS PACKAGE'),
   ('2022-8-13 03:58:21', 71, '2022-09-19', '2022-11-21', 3, 4103, 'KH000003', 'FAMILY PACKAGE'),
   ('2022-8-30 19:50:54', 19, '2022-10-17', '2022-11-17', 3, 2069, 'KH000004', 'FAMILY PACKAGE'),
-  ('2022-2-28 01:37:17', 17, '2022-03-11', '2022-05-10', 3, 1363, 'KH000002', 'BUSINESS PACKAGE'),
-  ('2022-02-22 15:51:52', 7, '2022-02-23', '2022-02-24', 3, 3365, 'KH000002', 'BUSINESS PACKAGE');
+  ('2022-2-28 01:37:17', 17, '2022-11-30', '2022-12-3', 3, 1363, 'KH000002', 'BUSINESS PACKAGE'),
+  ('2021-7-28 01:37:17', 17, '2021-11-30', '2021-12-3', 3, 1363, 'KH000002', 'BUSINESS PACKAGE'),
+  ('2022-02-22 15:51:52', 7, '2022-12-5', '2022-12-10', 3, 3365, 'KH000002', 'BUSINESS PACKAGE');
   
 
 -- --------------------------------- Phòng Thuê ----------------------------------------------------
