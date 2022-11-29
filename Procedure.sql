@@ -7,7 +7,7 @@ CREATE FUNCTION func_getSoNgayDaO(
 RETURNS INT
 BEGIN
 	DECLARE SoNgayDaO INT DEFAULT 0;
-	IF(EXISTS(SELECT * FROM DonDatPhong WHERE DonDatPhong.MaKhachHang = MaKhachHang)) THEN
+	IF(EXISTS(SELECT * FROM DonDatPhong WHERE DonDatPhong.MaKhachHang = MaKhachHang AND DonDatPhong.MaKhachHang = TenGoi)) THEN
         SELECT 
         -- DonDatPhong.MaKhachHang,
 -- 		DonDatPhong.NgayNhanPhong,
@@ -25,7 +25,7 @@ BEGIN
             HoaDonGoiDichVu.TenGoi = TenGoi AND
 			DonDatPhong.NgayNhanPhong > HoaDonGoiDichVu.NgayBatDau;
 	ELSE
-		RETURN 1;
+		RETURN 0;
     END IF;
     RETURN SoNgayDaO;
 END%%
