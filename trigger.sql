@@ -48,7 +48,7 @@ DELIMITER ;
 
 -- Trigger Tinh Tổng Tiền Thue Phong (Chưa làm)
 DROP TRIGGER IF EXISTS trg_TenGoiHopLe;
-DELIMITER %%
+DELIMITER %% 
 CREATE TRIGGER trg_TenGoiHopLe
 AFTER INSERT ON DonDatPhong FOR EACH ROW
 BEGIN
