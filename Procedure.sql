@@ -54,7 +54,55 @@ BEGIN
 		SELECT CONCAT("Khong tim thay khach hang co ma '", MaKhachHang,"' trong Hoa Don Goi Dich Vu") AS Message;
 	END IF;
 END %%
+
 DELIMITER ;
 
+DROP PROCEDURE IF EXISTS proc_KTGoiDichVu;
+DELIMITER %%
+CREATE PROCEDURE proc_KTGoiDichVu(
+	IN MaKhachHang varchar(8),
+    IN NgayBatDau DATETIME,
+    IN TenGoi VARCHAR(20)
+)
+BEGIN
+	DECLARE msg VARCHAR(128);
+        DECLARE goiHientai INT;
+--     SELECT * FROM HoaDonGoiDichVu;
+    
+	SELECT * FROM HoaDonGoiDichVu 
+           WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang
+				AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
+ 				AND HoaDonGoiDichVu.TenGoi = TenGoi);
+		
+    SELECT COUNT(*) INTO goiHientai
+    FROM 
+    (
+		SELECT * 
+		FROM HoaDonGoiDichVu 
+		WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
+			AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
+			AND HoaDonGoiDichVu.TenGoi = TenGoi)
+    )AS tmp;
+    
+    IF (goiHienTai <> 0) THEN
+		SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
+        SIGNAL sqlstate "12345" SET message_text = msg;
+	END IF;
+    
+	-- IF(EXiSTS(SELECT * FROM HoaDonGoiDichVu WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
+-- 													AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
+-- 													AND HoaDonGoiDichVu.TenGoi = TenGoi))) THEN
+-- 			SELECT * FROM HoaDonGoiDichVu 
+--             WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
+-- 				AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
+-- 				AND HoaDonGoiDichVu.TenGoi = TenGoi);
+-- 			SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
+-- 			SIGNAL sqlstate "45000" SET message_text = msg;
+--     END IF;
+END %%
+DELIMITER ;
+
+
+CALL proc_KTGoiDichVu("KH000001",'2023-3-28 10:00:00',  'FAMILY PACKAGE');
 CALL proc_GoiDichVu("KH000001");
 

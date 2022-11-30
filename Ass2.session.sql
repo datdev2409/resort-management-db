@@ -463,12 +463,40 @@ CREATE TABLE HoaDonGoiDichVu(
 	CONSTRAINT ck_BatDau_KetThuc CHECK (NgayBatDau > NgayGioMua)
 );
 
+-- Trigger kiemtra mua goi dich vu hop le
+DROP TRIGGER IF EXISTS before_HoaDonGoiDichVu_insert;
+DELIMITER %%
+CREATE TRIGGER before_HoaDonGoiDichVu_insert
+BEFORE INSERT ON HoaDonGoiDichVu FOR EACH ROW
+BEGIN
+	DECLARE msg VARCHAR(128);
+    DECLARE goiHientai INT;
+    
+    SET goiHientai = 0;
+    SELECT COUNT(*) INTO goiHientai
+    FROM 
+    (
+		SELECT * 
+		FROM HoaDonGoiDichVu 
+		WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
+			AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
+			AND HoaDonGoiDichVu.TenGoi = TenGoi)
+    )AS tmp;
+    
+    IF (goiHientai <> 0) THEN
+		SET goiHientai = 0;
+		SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
+        SIGNAL sqlstate "12345" SET message_text = msg;
+	END IF;
+END%%
+DELIMITER ;
+
 INSERT INTO HoaDonGoiDichVu (MaKhachHang, TenGoi, NgayGioMua, NgayBatDau, TongTien)
 VALUES
-	("KH000001", 'FAMILY PACKAGE', '2022-11-28 08:00:00', '2022-11-28 10:00:00', 17000),
-    ("KH000001", 'BUSINESS PACKAGE', '2022-8-28 08:00:00', '2022-8-28 10:00:00', 20000),
+  ("KH000001", 'FAMILY PACKAGE', '2022-8-28 08:00:00', '2022-8-28 10:00:00', 17000),
+--     ("KH000001", 'FAMILY PACKAGE', '2021-3-28 08:00:00', '2021-3-28 10:00:00', 20000),
   ("KH000002", 'BUSINESS PACKAGE', '2022-11-25 08:00:00', '2022-11-25 15:00:00', 20000),
-  ("KH000002", 'PERSONAL PACKAGE', '2022-9-15 08:00:00', '2022-9-15 15:00:00', 5000),
+ --  ("KH000002", 'PERSONAL PACKAGE', '2022-9-15 08:00:00', '2022-9-15 15:00:00', 5000),
   ("KH000003", 'PERSONAL PACKAGE', '2022-11-27 12:00:00', '2022-11-27 14:00:00', 5000);
 
 -- --------------------------------- Đơn Đặt Phòng ---------------------------------------------
@@ -477,13 +505,13 @@ DROP TABLE IF EXISTS DonDatPhong;
 CREATE TABLE DonDatPhong(
 	MaDatPhong VARCHAR(16) NOT NULL,
 	NgayGioDat DATETIME NOT NULL,
-  SoKhach INT NOT NULL,
+	SoKhach INT NOT NULL,
 	NgayNhanPhong DATE NOT NULL,
 	NgayTraPhong DATE NOT NULL,
 	TinhTrang INT(1) NOT NULL DEFAULT 0,
 	TongTien INT UNSIGNED NOT NULL DEFAULT 0,
 	MaKhachHang VARCHAR(8),
-	TenGoiDichVu VARCHAR(127) NOT NULL,
+	TenGoiDichVu VARCHAR(127) NOT NULL DEFAULT "None",
     
 	PRIMARY KEY (MaDatPhong),
 	CONSTRAINT fk_DonDatPhong_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
@@ -518,7 +546,7 @@ INSERT INTO DonDatPhong(NgayGioDat, SoKhach, NgayNhanPhong, NgayTraPhong, TinhTr
 VALUES
   ('2022-03-8 23:56:29', 92, '2022-09-10', '2022-09-12', 0, 3508, 'KH000001', 'BUSINESS PACKAGE'),
   ('2022-8-13 03:58:21', 71, '2022-09-19', '2022-11-21', 3, 4103, 'KH000003', 'FAMILY PACKAGE'),
-  ('2022-8-30 19:50:54', 19, '2022-10-17', '2022-11-17', 3, 2069, 'KH000004', 'FAMILY PACKAGE'),
+  ('2022-8-30 19:50:54', 19, '2022-10-17', '2022-11-17', 3, 2069, 'KH000004', 'BUSINESS PACKAGE'),
   ('2022-2-28 01:37:17', 17, '2022-11-30', '2022-12-3', 3, 1363, 'KH000002', 'BUSINESS PACKAGE'),
   ('2021-7-28 01:37:17', 17, '2021-11-30', '2021-12-3', 3, 1363, 'KH000002', 'BUSINESS PACKAGE'),
   ('2022-02-22 15:51:52', 7, '2022-12-5', '2022-12-10', 3, 3365, 'KH000002', 'BUSINESS PACKAGE');
