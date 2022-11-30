@@ -46,7 +46,6 @@ BEGIN
             HoaDonGoiDichVu.NgayBatDau,
             ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR ) AS NgayHetHan,
             (GoiDichVu.SoNgay - func_getSoNgayDao(MaKhachHang, HoaDonGoiDichVu.TenGoi)) AS SoNgayConLai
-            
 		FROM HoaDonGoiDichVu 
         LEFT JOIN GoiDichVu ON GoiDichVu.TenGoi = HoaDonGoiDichVu.TenGoi
         WHERE 
