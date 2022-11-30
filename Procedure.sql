@@ -66,7 +66,7 @@ CREATE PROCEDURE proc_KTGoiDichVu(
 )
 BEGIN
 	DECLARE msg VARCHAR(128);
-        DECLARE goiHientai INT;
+	DECLARE goiHientai INT;
 --     SELECT * FROM HoaDonGoiDichVu;
     
 	SELECT * FROM HoaDonGoiDichVu 
@@ -88,17 +88,7 @@ BEGIN
 		SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
         SIGNAL sqlstate "12345" SET message_text = msg;
 	END IF;
-    
-	-- IF(EXiSTS(SELECT * FROM HoaDonGoiDichVu WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
--- 													AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
--- 													AND HoaDonGoiDichVu.TenGoi = TenGoi))) THEN
--- 			SELECT * FROM HoaDonGoiDichVu 
---             WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
--- 				AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
--- 				AND HoaDonGoiDichVu.TenGoi = TenGoi);
--- 			SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
--- 			SIGNAL sqlstate "45000" SET message_text = msg;
---     END IF;
+
 END %%
 DELIMITER ;
 

@@ -26,23 +26,27 @@ CREATE TRIGGER before_HoaDonGoiDichVu_insert
 BEFORE INSERT ON HoaDonGoiDichVu FOR EACH ROW
 BEGIN
 	DECLARE msg VARCHAR(128);
-    DECLARE goiHientai INT;
+	DECLARE goiHientai INT;
     
+--     SELECT * FROM HoaDonGoiDichVu 
+--            WHERE (HoaDonGoiDichVu.MaKhachHang = NEW.MaKhachHang
+-- 				AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NEW.NgayBatDau     
+--  				AND HoaDonGoiDichVu.TenGoi = NEW.TenGoi);
+		
     SELECT COUNT(*) INTO goiHientai
     FROM 
     (
 		SELECT * 
 		FROM HoaDonGoiDichVu 
-		WHERE (HoaDonGoiDichVu.MaKhachHang = MaKhachHang     
-			AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NgayBatDau     
-			AND HoaDonGoiDichVu.TenGoi = TenGoi)
+		WHERE (HoaDonGoiDichVu.MaKhachHang = NEW.MaKhachHang     
+			AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NEW.NgayBatDau     
+			AND HoaDonGoiDichVu.TenGoi = NEW.TenGoi)
     )AS tmp;
     
     IF (goiHienTai <> 0) THEN
 		SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
         SIGNAL sqlstate "12345" SET message_text = msg;
 	END IF;
-
 END%%
 DELIMITER ;
 
