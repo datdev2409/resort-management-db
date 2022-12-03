@@ -62,6 +62,7 @@ exports.updateCustomer = catchAsync(async (req, res, next) => {
 });
 
 exports.register = catchAsync(async (req, res, next) => {
+  console.log(req.body)
   const { CCCD, HoVaTen, DienThoai, Email, Username, Password } = req.body;
 
   if (!Username || !Password) {
@@ -89,16 +90,19 @@ exports.register = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { username, password } = req.body;
+  const { Username, Password } = req.body;
 
-  const customer = await customerService.getCustomerByUsername(username);
-  if (!customer) throw new Error('Customer does not exists')
-  const isPasswordMatch = await bcrypt.compare(password, customer.Password);
+  if (!Username || !Password) {
+    res.status(400).json({
+      status: 'fail',
+      message: 'Please provide username and password'
+    })
+  }
 
-  if (isPasswordMatch) {
+  if (Username == process.env.DB_USERNAME && Password == process.env.DB_PASSWORD) {
     res.status(200).json({
       status: 'success',
-      jwt: generateToken(customer.MaKhachHang),
+      jwt: generateToken(Username),
     });
   }
 

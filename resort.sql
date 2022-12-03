@@ -2,7 +2,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 
 DROP TABLE IF EXISTS ChiNhanh;
 CREATE TABLE IF NOT EXISTS ChiNhanh (
-    MaChiNhanh VARCHAR(5) NOT NULL,
+    MaChiNhanh VARCHAR(6) NOT NULL,
     Tinh VARCHAR(16),
     DiaChi VARCHAR(50),
     DienThoai VARCHAR(12),
@@ -128,8 +128,8 @@ CREATE TABLE IF NOT EXISTS KhachHang(
     HoVaTen VARCHAR(50) NOT NULL,
     DienThoai VARCHAR(12) NOT NULL UNIQUE,
     Email VARCHAR(127) UNIQUE,
-    Username VARCHAR(127) UNIQUE,
-    Password VARCHAR(50) NOT NULL,
+    Username VARCHAR(127) NOT NULL UNIQUE,
+    Password VARCHAR(127) NOT NULL,
     Diem INT NOT NULL DEFAULT 0,
     Loai INT NOT NULL DEFAULT 1,
     
@@ -161,12 +161,13 @@ CREATE TABLE IF NOT EXISTS HoaDonGoiDichVu(
 	TongTien INT NOT NULL,
     
 	PRIMARY KEY (MaKhachHang, TenGoi, NgayGioMua),
+    FOREIGN KEY (TenGoi) REFERENCES GoiDichVu(TenGoi),
 	CONSTRAINT fk_HoaDonGoiDV_KH FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
 															 ON UPDATE CASCADE
-															 ON DELETE NO ACTION,
-	CONSTRAINT fk_HoaDonGoiDV_GoiDV FOREIGN KEY (TenGoi) REFERENCES GoiDichVu(TenGoi)
-														 ON UPDATE CASCADE
-														 ON DELETE NO ACTION,
+															 ON DELETE CASCADE,
+-- 	CONSTRAINT fk_HoaDonGoiDV_GoiDV FOREIGN KEY (TenGoi) REFERENCES GoiDichVu(TenGoi)
+-- 														 ON UPDATE CASCADE
+-- 														 ON DELETE NO ACTION,
     
 	CONSTRAINT ck_BatDau_KetThuc CHECK (NgayBatDau > NgayGioMua)
 );
@@ -186,14 +187,15 @@ CREATE TABLE IF NOT EXISTS DonDatPhong(
 	TenGoiDichVu VARCHAR(127) DEFAULT NULL,
     
 	PRIMARY KEY (MaDatPhong),
-	CONSTRAINT fk_DonDatPhong_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
-																  ON UPDATE CASCADE
-																  ON DELETE NO ACTION,
-	CONSTRAINT fk_DonDatPhong_GoiDichVu FOREIGN KEY (TenGoiDichVu) REFERENCES GoiDichVu(TenGoi)
-																   ON UPDATE CASCADE
-																   ON DELETE NO ACTION,
+    FOREIGN KEY (MaKhachHang, TenGoiDichVu) REFERENCES HoaDonGoiDichVu(MaKhachHang, TenGoi),
+	-- CONSTRAINT fk_DonDatPhong_KhachHang FOREIGN KEY (MaKhachHang) REFERENCES KhachHang(MaKhachHang)
+-- 																  ON UPDATE CASCADE
+-- 																  ON DELETE NO ACTION,
+-- 	CONSTRAINT fk_DonDatPhong_GoiDichVu FOREIGN KEY (TenGoiDichVu) REFERENCES GoiDichVu(TenGoi)
+-- 																   ON UPDATE CASCADE
+-- 																   ON DELETE NO ACTION,
                          
-	CONSTRAINT ck_NhanPhong_DatPhong CHECK (NgayNhanPhong > NgayGioDat),
+	-- CONSTRAINT ck_NhanPhong_DatPhong CHECK (NgayNhanPhong > DATE(NgayGioDat)),
 	CONSTRAINT ck_TraPhong_NhanPhong CHECK (NgayTraPhong > NgayNhanPhong),
 	CONSTRAINT ck_TinhTrang CHECK (TinhTrang >= 0 AND TinhTrang <= 3)
 );

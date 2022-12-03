@@ -7,7 +7,7 @@ BEGIN
     FROM PhongThue 
     INNER JOIN DonDatPhong
     ON PhongThue.MaDatPhong = DonDatPhong.MaDatPhong
-    WHERE YEAR(NgayGioDat) = NamThongKe AND PhongThue.MaChiNhanh = MaChiNhanh AND TinhTrang = 2
+    WHERE YEAR(NgayGioDat) = NamThongKe AND PhongThue.MaChiNhanh = MaChiNhanh AND TinhTrang = 1
     GROUP BY MONTH(NgayGioDat);
 
 END %%
@@ -17,4 +17,4 @@ DELIMITER ;
 
 
 
-CALL ThongKeLuotKhach('CN2', '2022');
+CALL ThongKeLuotKhach('CN1', '2022');

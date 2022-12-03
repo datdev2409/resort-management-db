@@ -1,3 +1,17 @@
+DROP PROCEDURE IF EXISTS get_rental_price;
+DELIMITER %%
+CREATE PROCEDURE get_rental_price (IN MaDatPhong VARCHAR(16), OUT TongTien INT)
+BEGIN
+	SELECT SUM(GiaThue)
+	FROM PhongThue 
+	INNER JOIN Phong ON PhongThue.MaChiNhanh = Phong.MaChiNhanh AND PhongThue.SoPhong = Phong.SoPhong
+	INNER JOIN ChiNhanh_LoaiPhong
+    ON Phong.MaLoaiPhong = ChiNhanh_LoaiPhong.MaLoaiPhong AND ChiNhanh_LoaiPhong.MaChiNhanh = Phong.MaChiNhanh
+	WHERE PhongThue.MaDatPhong = MaDatPhong INTO TongTien;
+
+END %%
+DELIMITER ;
+
 DROP TABLE IF EXISTS ChiNhanh_ID;
 CREATE TABLE ChiNhanh_ID (
     ID INT AUTO_INCREMENT PRIMARY KEY
@@ -19,6 +33,7 @@ CREATE TABLE IF NOT EXISTS LoaiVatTu_ID (
     ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
 );
 
+DROP TRIGGER IF EXISTS before_loaivattu_insert;
 DELIMITER %%
 CREATE TRIGGER before_loaivattu_insert BEFORE INSERT ON LoaiVatTu
 	FOR EACH ROW
@@ -75,8 +90,18 @@ DELIMITER %%
 CREATE TRIGGER before_dondatphong_insert BEFORE INSERT ON DonDatPhong
 FOR EACH ROW
 	BEGIN
+		DECLARE PRICE INT DEFAULT 0;
 		INSERT INTO DonDatPhong_ID VALUE ();
 		SET NEW.MaDatPhong = CONCAT("DP", DATE_FORMAT(NEW.NgayGioDat, '%d%m%Y'), LPAD(LAST_INSERT_ID(), 6, '0'));
+		-- CALL get_rental_price(NEW.MaDatPhong, PRICE);
+--         
+        
+		SET NEW.TongTien = 10;
+    
+		SET NEW.NgayNhanPhong = ADDDATE(NEW.NgayGioDat, INTERVAL 12 HOUR); -- FOR INSERT
+		SET NEW.NgayTraPhong = ADDDATE(NEW.NgayNhanPhong, INTERVAL 2 DAY); -- FOR INSERT
+		IF NEW.TinhTrang = 2 THEN CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
+        END IF;
 	END %%
 DELIMITER ;
 
@@ -170,25 +195,6 @@ FOR EACH ROW
     END %%
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS after_dondatphong_insert;
-DELIMITER %%
-CREATE TRIGGER after_dondatphong_insert BEFORE INSERT ON DonDatPhong
-FOR EACH ROW
-	BEGIN
-		IF NEW.TinhTrang = 2 THEN CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
-        END IF;
-    END %%
-DELIMITER ;
-
-
-DROP TRIGGER IF EXISTS add_point_when_buy_package;
-DELIMITER %%
-CREATE TRIGGER add_point_when_buy_package BEFORE INSERT ON HoaDonGoiDichVu
-FOR EACH ROW 
-BEGIN
-	CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
-END %%
-DELIMITER ;
 
 -- ######################UPDATE CUSTOMER TYPE ##############################################
 DROP PROCEDURE IF EXISTS updateCustomerType;
@@ -209,14 +215,34 @@ BEGIN
 END %%
 DELIMITER ;
 
-DROP TRIGGER IF EXISTS after_point_change;
+-- THIS IS USED FOR QUICK INSERT DATA PURPOSE
+DROP TRIGGER IF EXISTS before_hoadongoidichvu_insert;
+DELIMITER %%
+CREATE TRIGGER before_hoadongoidichvu_insert BEFORE INSERT ON HoaDonGoiDichVu
+FOR EACH ROW
+BEGIN
+	DECLARE PRICE INT DEFAULT 0;
+	SELECT Gia INTO PRICE FROM GoiDichVu WHERE TenGoi = NEW.TenGoi;
+	SET NEW.TongTien = PRICE;
+    SET NEW.NgayBatDau = ADDDATE(NEW.NgayGioMua, INTERVAL 12 HOUR); -- FOR INSERT
+    CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
+END %%
+DELIMITER ;
+
+
+
+-- DROP TRIGGER IF EXISTS before_dondatphong_insert;
 -- DELIMITER %%
--- CREATE TRIGGER after_point_change AFTER UPDATE ON KhachHang
+-- CREATE TRIGGER before_dondatphong_insert BEFORE INSERT ON DonDatPhong
 -- FOR EACH ROW
 -- BEGIN
--- 	IF OLD.Diem != NEW.Diem THEN 
--- 		CALL updateCustomerType(NEW.MaKhachHang, NEW.Diem); 
---     END IF;
+-- 	DECLARE PRICE INT DEFAULT 0;
+--     CALL get_rental_price(NEW.MaDatPhong, @price);
+-- 	SET NEW.TongTien = 10;
+--     
+--     SET NEW.NgayNhanPhong = DATE(ADDDATE(NEW.NgayGioDat, INTERVAL 12 HOUR)); -- FOR INSERT
+--     SET NEW.NgayTraPhong = DATE(ADDDATE(NEW.NgayNhanPhong, INTERVAL 2 DAY)); -- FOR INSERT
 -- END %%
-
 -- DELIMITER ;
+
+

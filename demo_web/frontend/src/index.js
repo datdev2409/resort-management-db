@@ -5,13 +5,18 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import RegisterPage from './pages/RegisterPage';
+import LoginPage from './pages/LoginPage';
+import Homepage from './pages/Homepage';
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <RegisterPage />
+    element: <Homepage />
   },
+  {
+    path: "/login",
+    element: <LoginPage />
+  }
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
