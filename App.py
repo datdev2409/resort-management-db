@@ -1,9 +1,8 @@
-import tkinter as tk
 import customtkinter
-from views.HomePage import *
-from views.LoginPage import *
-from views.CustomerPage import *
-from views.Navbar import *
+from views.pages.HomePage import *
+from views.pages.LoginPage import *
+from views.pages.CustomerPage import *
+from views.pages.Navbar import *
 
 customtkinter.set_appearance_mode('dark')
 customtkinter.set_widget_scaling(1.3)
