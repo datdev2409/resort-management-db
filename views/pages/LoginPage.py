@@ -34,7 +34,7 @@ class LoginPage(customtkinter.CTkFrame):
       )
       
       mb.showinfo('Success', 'Database connected')
-      self.parent.to_home_page()
+      self.parent.to_customer_page()
     except Error as e:
       self.password_input.delete(0, tk.END)
       mb.showerror('Error', 'Authentication failed')

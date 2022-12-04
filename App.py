@@ -3,8 +3,10 @@ from views.pages.HomePage import *
 from views.pages.LoginPage import *
 from views.pages.CustomerPage import *
 from views.pages.Navbar import *
+from views.pages.RoomTypePage import *
+from views.pages.StatsPage import *
 
-customtkinter.set_appearance_mode('dark')
+customtkinter.set_appearance_mode('light')
 customtkinter.set_widget_scaling(1.3)
 
 class App(customtkinter.CTk):
@@ -18,7 +20,9 @@ class App(customtkinter.CTk):
       'navbar': Navbar(self),
       'login': LoginPage(self),
       'home': HomePage(self),
-      'customer': CustomerPage(self)
+      'customer': RoomTypePage(self),
+      'room_type': RoomTypePage(self),
+      'stats': StatsPage(self)
     }
 
     self.clear_screen()
@@ -45,7 +49,17 @@ class App(customtkinter.CTk):
     self.clear_screen()
     self.display_navbar()
     self.display_page('customer')
+
+  def to_room_type_page(self):
+    self.clear_screen()
+    self.display_navbar()
+    self.display_page('room_type')
   
+  def to_stats_page(self):
+    self.clear_screen()
+    self.display_navbar()
+    self.display_page('stats')
+
   def logout(self):
     self.connection = None
     self.clear_screen()

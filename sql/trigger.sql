@@ -50,6 +50,7 @@ CREATE TABLE IF NOT EXISTS NhaCungCap_ID (
 );
 
 DELIMITER %%
+DROP TRIGGER IF EXISTS before_nhacungcap_insert;
 CREATE TRIGGER before_nhacungcap_insert BEFORE INSERT ON NhaCungCap
 	FOR EACH ROW
 		BEGIN
@@ -100,7 +101,7 @@ FOR EACH ROW
     
 		SET NEW.NgayNhanPhong = ADDDATE(NEW.NgayGioDat, INTERVAL 12 HOUR); -- FOR INSERT
 		SET NEW.NgayTraPhong = ADDDATE(NEW.NgayNhanPhong, INTERVAL 2 DAY); -- FOR INSERT
-		IF NEW.TinhTrang = 2 THEN CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
+		IF NEW.TinhTrang = 1 THEN CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
         END IF;
 	END %%
 DELIMITER ;
@@ -188,7 +189,8 @@ DELIMITER %%
 CREATE TRIGGER after_dondatphong_thanhtoan BEFORE UPDATE ON DonDatPhong
 FOR EACH ROW
 	BEGIN
-		IF OLD.TinhTrang = 1 AND NEW.TinhTrang = 2 THEN
+		IF OLD.TinhTrang = 0 AND NEW.TinhTrang = 1
+        THEN
 			CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
         END IF;
     
@@ -225,7 +227,7 @@ BEGIN
 	SELECT Gia INTO PRICE FROM GoiDichVu WHERE TenGoi = NEW.TenGoi;
 	SET NEW.TongTien = PRICE;
     SET NEW.NgayBatDau = ADDDATE(NEW.NgayGioMua, INTERVAL 12 HOUR); -- FOR INSERT
-    CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
+	CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
 END %%
 DELIMITER ;
 
@@ -245,4 +247,35 @@ DELIMITER ;
 -- END %%
 -- DELIMITER ;
 
+
+-- Trigger kiemtra mua goi dich vu hop le
+DROP TRIGGER IF EXISTS before_HoaDonGoiDichVu_insert;
+DELIMITER %%
+CREATE TRIGGER before_HoaDonGoiDichVu_insert
+BEFORE INSERT ON HoaDonGoiDichVu FOR EACH ROW
+BEGIN
+	DECLARE msg VARCHAR(128);
+	DECLARE goiHientai INT;
+    
+--     SELECT * FROM HoaDonGoiDichVu 
+--            WHERE (HoaDonGoiDichVu.MaKhachHang = NEW.MaKhachHang
+-- 				AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NEW.NgayBatDau     
+--  				AND HoaDonGoiDichVu.TenGoi = NEW.TenGoi);
+		
+    SELECT COUNT(*) INTO goiHientai
+    FROM 
+    (
+		SELECT * 
+		FROM HoaDonGoiDichVu 
+		WHERE (HoaDonGoiDichVu.MaKhachHang = NEW.MaKhachHang     
+			AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NEW.NgayBatDau     
+			AND HoaDonGoiDichVu.TenGoi = NEW.TenGoi)
+    )AS tmp;
+    
+    IF (goiHienTai <> 0) THEN
+		SET msg = CONCAT("before_HoaDonGoiDichVu_insert: Goi Dich Vu con han Su Dung");
+        SIGNAL sqlstate "12345" SET message_text = msg;
+	END IF;
+END%%
+DELIMITER ;
 

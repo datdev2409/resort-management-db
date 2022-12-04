@@ -9,9 +9,9 @@ class Square(customtkinter.CTkEntry):
         width=200,
         corner_radius=0,
         bg_color='#333',
-        fg_color='#333',
+        fg_color='#f4f4f4',
         border_width=0,
-        placeholder_text_color='#fff',
+        placeholder_text_color='#000',
         placeholder_text=text,
         **kwagrs
       )
@@ -24,8 +24,9 @@ class Square(customtkinter.CTkEntry):
         corner_radius=0,
         border_width=0,
         bg_color='#333',
-        fg_color='#333',
+        fg_color='#f4f4f4',
         placeholder_text=text,
+        placeholder_text_color='#333',
         **kwagrs
       )
     
