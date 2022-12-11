@@ -49,14 +49,15 @@ CREATE TABLE IF NOT EXISTS NhaCungCap_ID (
     ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY
 );
 
-DELIMITER %%
+
 DROP TRIGGER IF EXISTS before_nhacungcap_insert;
+DELIMITER %%
 CREATE TRIGGER before_nhacungcap_insert BEFORE INSERT ON NhaCungCap
-	FOR EACH ROW
-		BEGIN
-			INSERT INTO NhaCungCap_ID VALUE ();
-      SET NEW.MaNhaCungCap = CONCAT ("NCC", LPAD(LAST_INSERT_ID(), 4, "0"));
-    END %%
+FOR EACH ROW
+	BEGIN
+		INSERT INTO NhaCungCap_ID VALUE ();
+		SET NEW.MaNhaCungCap = CONCAT("NCC", LPAD(LAST_INSERT_ID(), 4, "0"));
+	END %%
 	
 DELIMITER ;
 
@@ -91,13 +92,12 @@ DELIMITER %%
 CREATE TRIGGER before_dondatphong_insert BEFORE INSERT ON DonDatPhong
 FOR EACH ROW
 	BEGIN
-		DECLARE PRICE INT DEFAULT 0;
 		INSERT INTO DonDatPhong_ID VALUE ();
 		SET NEW.MaDatPhong = CONCAT("DP", DATE_FORMAT(NEW.NgayGioDat, '%d%m%Y'), LPAD(LAST_INSERT_ID(), 6, '0'));
 		-- CALL get_rental_price(NEW.MaDatPhong, PRICE);
 --         
         
-		SET NEW.TongTien = 10;
+		SET NEW.TongTien = get_net_price(NEW.MaDatPhong);
     
 		SET NEW.NgayNhanPhong = ADDDATE(NEW.NgayGioDat, INTERVAL 12 HOUR); -- FOR INSERT
 		SET NEW.NgayTraPhong = ADDDATE(NEW.NgayNhanPhong, INTERVAL 2 DAY); -- FOR INSERT
@@ -246,6 +246,18 @@ DELIMITER ;
 --     SET NEW.NgayTraPhong = DATE(ADDDATE(NEW.NgayNhanPhong, INTERVAL 2 DAY)); -- FOR INSERT
 -- END %%
 -- DELIMITER ;
+
+DROP TRIGGER IF EXISTS after_phongthue_insert;
+DELIMITER %%
+CREATE TRIGGER after_phongthue_insert
+AFTER INSERT ON PhongThue
+FOR EACH ROW
+BEGIN
+	UPDATE DonDatPhong SET TongTien = get_net_price(NEW.MaDatPhong)
+    WHERE MaDatPhong = NEW.MaDatPhong;
+
+END %%
+DELIMITER ;
 
 
 -- Trigger kiemtra mua goi dich vu hop le
