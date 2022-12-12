@@ -39,8 +39,15 @@ CREATE FUNCTION get_rental_price_from_booking_id(PMaDatPhong VARCHAR(16))
         DECLARE VMaChiNhanh VARCHAR(6);
         DECLARE VSoPhong VARCHAR(3);
         DECLARE VMaLoaiPhong INT;
+        DECLARE VGoiDichVu VARCHAR(30);
         SET price = 0;
         SET VMaLoaiPhong = 0;
+        SET VGoiDichVu = "";
+        
+        SELECT TenGoiDichVu FROM DonDatPhong WHERE MaDatPhong = PMaDatPhong LIMIT 1 INTO VGoiDichVu;
+        IF (VGoiDichVu != "") THEN
+			RETURN 0;
+        END IF;
         
         -- Find MaChiNhanh, SoPhong FROM table PhongThue based on MaDatPhong
         SELECT MaChiNhanh, SoPhong FROM PhongThue
@@ -112,5 +119,5 @@ BEGIN
 END %%
 DELIMITER ;
 
-SELECT get_net_price('DP08032022000001');
+SELECT get_net_price('DP30082022000003');
 
