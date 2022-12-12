@@ -1,16 +1,16 @@
-DROP PROCEDURE IF EXISTS get_rental_price;
-DELIMITER %%
-CREATE PROCEDURE get_rental_price (IN MaDatPhong VARCHAR(16), OUT TongTien INT)
-BEGIN
-	SELECT SUM(GiaThue)
-	FROM PhongThue 
-	INNER JOIN Phong ON PhongThue.MaChiNhanh = Phong.MaChiNhanh AND PhongThue.SoPhong = Phong.SoPhong
-	INNER JOIN ChiNhanh_LoaiPhong
-    ON Phong.MaLoaiPhong = ChiNhanh_LoaiPhong.MaLoaiPhong AND ChiNhanh_LoaiPhong.MaChiNhanh = Phong.MaChiNhanh
-	WHERE PhongThue.MaDatPhong = MaDatPhong INTO TongTien;
+-- DROP PROCEDURE IF EXISTS get_rental_price;
+-- DELIMITER %%
+-- CREATE PROCEDURE get_rental_price (IN MaDatPhong VARCHAR(16), OUT TongTien INT)
+-- BEGIN
+-- 	SELECT SUM(GiaThue)
+-- 	FROM PhongThue 
+-- 	INNER JOIN Phong ON PhongThue.MaChiNhanh = Phong.MaChiNhanh AND PhongThue.SoPhong = Phong.SoPhong
+-- 	INNER JOIN ChiNhanh_LoaiPhong
+--     ON Phong.MaLoaiPhong = ChiNhanh_LoaiPhong.MaLoaiPhong AND ChiNhanh_LoaiPhong.MaChiNhanh = Phong.MaChiNhanh
+-- 	WHERE PhongThue.MaDatPhong = MaDatPhong INTO TongTien;
 
-END %%
-DELIMITER ;
+-- END %%
+-- DELIMITER ;
 
 DROP TABLE IF EXISTS ChiNhanh_ID;
 CREATE TABLE ChiNhanh_ID (
@@ -218,18 +218,18 @@ END %%
 DELIMITER ;
 
 -- THIS IS USED FOR QUICK INSERT DATA PURPOSE
-DROP TRIGGER IF EXISTS before_hoadongoidichvu_insert;
-DELIMITER %%
-CREATE TRIGGER before_hoadongoidichvu_insert BEFORE INSERT ON HoaDonGoiDichVu
-FOR EACH ROW
-BEGIN
-	DECLARE PRICE INT DEFAULT 0;
-	SELECT Gia INTO PRICE FROM GoiDichVu WHERE TenGoi = NEW.TenGoi;
-	SET NEW.TongTien = PRICE;
-    SET NEW.NgayBatDau = ADDDATE(NEW.NgayGioMua, INTERVAL 12 HOUR); -- FOR INSERT
-	CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
-END %%
-DELIMITER ;
+-- DROP TRIGGER IF EXISTS before_hoadongoidichvu_insert;
+-- DELIMITER %%
+-- CREATE TRIGGER before_hoadongoidichvu_insert BEFORE INSERT ON HoaDonGoiDichVu
+-- FOR EACH ROW
+-- BEGIN
+-- 	DECLARE PRICE INT DEFAULT 0;
+-- 	SELECT Gia INTO PRICE FROM GoiDichVu WHERE TenGoi = NEW.TenGoi;
+-- 	SET NEW.TongTien = PRICE;
+--     SET NEW.NgayBatDau = ADDDATE(NEW.NgayGioMua, INTERVAL 12 HOUR); -- FOR INSERT
+-- 	CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
+-- END %%
+-- DELIMITER ;
 
 
 
@@ -268,7 +268,7 @@ BEFORE INSERT ON HoaDonGoiDichVu FOR EACH ROW
 BEGIN
 	DECLARE msg VARCHAR(128);
 	DECLARE goiHientai INT;
-    
+    CALL addBonusPoint(NEW.MaKhachHang, NEW.TongTien);
 --     SELECT * FROM HoaDonGoiDichVu 
 --            WHERE (HoaDonGoiDichVu.MaKhachHang = NEW.MaKhachHang
 -- 				AND ADDDATE(HoaDonGoiDichVu.NgayBatDau, INTERVAL 1 YEAR) > NEW.NgayBatDau     

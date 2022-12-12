@@ -20,7 +20,7 @@ class App(customtkinter.CTk):
       'navbar': Navbar(self),
       'login': LoginPage(self),
       'home': HomePage(self),
-      'customer': RoomTypePage(self),
+      'customer': CustomerPage(self),
       'room_type': RoomTypePage(self),
       'stats': StatsPage(self)
     }
